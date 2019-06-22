@@ -4,6 +4,8 @@ import json
 from pprint import pprint
 import requests
 import Config
+import boto3
+from io import StringIO
 
 class GatherApartmentData():
 
@@ -166,8 +168,8 @@ def enrichWalkScore(df):
 
 
 if __name__ == '__main__':
-	GatherApartmentData('New York City').getApartmentData()
-	# endpoint = """http://api.walkscore.com/score?format=json&address=74 Broad Street&lat=40.704519&lon=-74.011599&transit=1&bike=1&wsapikey=ffd1c56f9abcf84872116b4cc2dfcf31"""
-	# r = requests.get(endpoint)
-	# data = json.loads(r.content)
-	# pprint (data['walkscore'])
+	# GatherApartmentData('New York City').getApartmentData()
+	endpoint = """http://api.walkscore.com/score?format=json&address=74 Broad Street&lat=40.704519&lon=-74.011599&transit=1&bike=1&wsapikey=ffd1c56f9abcf84872116b4cc2dfcf31"""
+	r = requests.get(endpoint)
+	data = json.loads(r.content)
+	pprint (data['walkscore'])
