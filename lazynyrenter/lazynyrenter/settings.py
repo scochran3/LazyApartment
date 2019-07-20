@@ -76,7 +76,7 @@ WSGI_APPLICATION = 'lazynyrenter.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/2.1/ref/settings/#databases
 
-if 'apartmentsdatabase' in os.environ:
+if 'RDS_HOSTNAME' in os.environ:
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.postgresql_psycopg2',
