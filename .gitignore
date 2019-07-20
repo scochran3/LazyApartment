@@ -4,3 +4,7 @@
 /notebooks/housing.csv
 /notebooks/housing_cleaned.csv
 /notebooks/housing_cleaned_deduped.csv
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
