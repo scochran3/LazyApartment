@@ -53,7 +53,7 @@
 			<div class="row">
 				<div class="left-menu text-right menu-1">
 					<ul>
-						<li><a href="#">By Apartment</a></li>
+						<li><a href="{% url 'byBorough' %}">By Borough</a></li>
 						<li><a href="{% url 'byNeighborhood' %}">By Neighborhood</a></li>
 					</ul>
 				</div>
@@ -62,8 +62,8 @@
 				</div>
 				<div class="right-menu text-left menu-1">
 					<ul>
-						<li><a href="#">By Apartment Size</a></li>
-						<li><a href="#">About</a></li>
+						<li><a href="{% url 'byZipCode' %}">By Zip Code</a></li>
+						<li><a href="#">My Apartment's Value</a></li>
 						<!-- <li class="btn-cta"><a href="#"><span>Login</span></a></li> -->
 					</ul>
 				</div>

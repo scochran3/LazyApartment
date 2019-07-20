@@ -1,6 +1,5 @@
 from django.shortcuts import render
 from .models import Apartment
-from pprint import pprint
 from django.utils.text import slugify
 from django_pandas.io import read_frame
 from django.db.models import Count

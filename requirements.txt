@@ -1,0 +1,7 @@
+Django==2.1.7
+pandas==0.23.4
+psycopg2==2.8.2
+bokeh==1.2.0
+jsmin==2.2.2
+django_pandas
+numpy
