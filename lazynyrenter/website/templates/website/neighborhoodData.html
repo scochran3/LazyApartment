@@ -1,0 +1,122 @@
+{% extends 'website/base.html' %}
+{% load static %}
+{% load humanize %}
+{% load percentage %}
+{% block title %}TV Datatron 3000 - All Shows{% endblock %}
+{% block content %}
+
+<!-- Bokeh -->
+<link href="http://cdn.pydata.org/bokeh/release/bokeh-1.2.0.min.css" rel="stylesheet" type="text/css">
+<link href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.2.0.min.css" rel="stylesheet" type="text/css">
+<link href="http://cdn.pydata.org/bokeh/release/bokeh-tables-1.2.0.min.css" rel="stylesheet" type="text/css">
+
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-1.2.0.min.js"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.2.0.min.js"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-tables-1.2.0.min.js"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-api-1.2.0.min.js"></script>
+<script src="http://cdn.pydata.org/bokeh/release/bokeh-tables-1.2.0.min.js"></script>
+
+
+<!-- HTML -->
+<div class="row animate-box">
+	<div class='col-lg-12'>
+		<h6 class="breadcrumb-trail"><a href="{% url 'index' %}">Home</a> > <a href="{% url 'byNeighborhood' %}">All Neighborhoods</a> > {{neighborhood}}</h6>
+	</div>
+	<div class="col-lg-12">
+		<h1 class="page-title">{{neighborhood}}</h1>
+	</div>
+</div>
+<div class="row animate-box">
+	<div class='col-lg-6 col-xs-12'>
+		<h2 class="page-subtitle">Location</h2>
+		<div style="width: 100%">
+		  <iframe width="100%" height="400" 
+		    src="https://maps.google.com/maps?output=embed&amp;height=400&amp;hl=en&amp;q={{neighborhood}}+New+York&amp;ie=UTF8&amp;t=&amp;z=12&amp;iwloc=B"
+		    frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
+		</div>
+	</div>
+	<div class="col-lg-6 col-xs-12">
+		<h2 class="page-subtitle">Cheapest Listings</h2>
+		{{cheapestApartments|safe}}
+		<h2 class="page-subtitle">Priciest Listings</h2>
+		{{priciestApartments|safe}}
+	</div>
+</div>
+<div class="row animate-box chart-section">
+	<h2 class="page-subtitle">How do prices in {{neighborhood}} compare to the rest of the city?</h2>
+	<h3 class='data-excerpt'>With a <span class='highlight-data'>median price of ${{areaPrices.thisAreaPrice|intcomma}}</span>, {{neighborhood}} is the <span class='highlight-data'>{{areaPrices.thisAreaRank|ordinal}} most expensive neighborhood in New York</span> out of a total of {{areaPrices.numberOfAreas}} neighborhoods. As a point of reference, <span class='highlight-data'>the median price of an apartment in New York City is ${{areaPrices.medianPrice|intcomma}}</span>. You can also compare this to the most expensive area of New York City, which is <span class='highlight-data'>{{areaPrices.mostExpensiveArea}}, with a median price of ${{areaPrices.mostExpensivePrice|intcomma}}</span>!
+</div>
+<div class="row animate-box chart-section">
+	<div class="col-lg-12 col-xs-12">
+		<h2 class="page-subtitle">Median Price Over Time</h2>
+		<p>Below you can see the median prices for apartment listing in {{neighborhood}} over time with data going back to late June, 2019. You can also see the median price across the rest of New York City so you can compare this neighborhood to the rest of the city.</p>
+			{{priceOverTime.1|safe}}
+			{{priceOverTime.0|safe}}
+	</div>
+</div>
+<div class="row animate-box chart-section">
+	<div class="col-lg-4 col-lg-push-8 col-xs-12">
+		<h2 class="page-subtitle">How much can you expect to pay?</h2>
+		<p>This histogram shows you how many Craigslist apartment listings are in each price range. For example, the most common price range for apartment listings in {{neighborhood}} is ${{priceHistogram.2}} to ${{priceHistogram.3}}. You can use this to get a pretty good idea of what you can expect to pay in order to live in {{neighborhood}}. </p>
+	</div>
+	<div class="col-lg-8 col-lg-pull-4 col-xs-12">
+		{{priceHistogram.1|safe}}
+		{{priceHistogram.0|safe}}
+	</div>
+</div>
+<div class="row animate-box chart-section">
+	<div class="col-lg-4 col-xs-12">
+		<h2 class="page-subtitle">Average Price By Bedrooms</h2>
+		<p>The biggest factor in prices for apartments in New York is not surprisingly the number of bedrooms. Here you can see the median price for apartments in {{neighborhood}} based on the number of bedrooms. Also, for your info, here what percentage of listings in {{neighborhood}} are for each size of apartment:</p>
+		<ul>
+			<li><strong>Studios</strong>: {{priceByBedrooms.2.0|percentage}} of listings.</li>
+			<li><strong>1 Bedrooms</strong>: {{priceByBedrooms.2.1|percentage}} of listings.</li>
+			<li><strong>2 Bedrooms</strong>: {{priceByBedrooms.2.2|percentage}} of listings.</li>
+			<li><strong>3 Bedrooms</strong>: {{priceByBedrooms.2.3|percentage}} of listings.</li>
+		</ul>
+	</div>
+	<div class="col-lg-8 col-xs-12">
+		{{priceByBedrooms.1|safe}}
+		{{priceByBedrooms.0|safe}}
+	</div>
+</div>
+<div class="row animate-box chart-section">
+	<div class="col-lg-4 col-lg-push-8 col-xs-12">
+		<h2 class="page-subtitle">How big will my apartment be?</h2>
+		<p>New York is famous for many things, but large apartments isn't one of them. This chart looks at how big (in square feet) most apartments are in the {{neighborhood}} area. The most common size apartment listed in {{neighborhood}} is between {{squareFootageHistogram.2}} and {{squareFootageHistogram.3}} square feet. Remember this is across all apartments - studios, one bedrooms, etc. You can see how square footage varies across different size bedrooms below.</p>
+	</div>
+	<div class="col-lg-8 col-lg-pull-4 col-xs-12">
+		{{squareFootageHistogram.1|safe}}
+		{{squareFootageHistogram.0|safe}}
+	</div>
+</div>
+<div class="row animate-box chart-section">
+	<div class="col-lg-12 col-xs-12">
+		<h2 class="page-subtitle">Price vs. Square Footage</h2>
+		<p>How much more am I going to pay for a bigger apartment? How big are most one bedrooms? What about two bedrooms? The chart below looks at all of our apartment listing in {{neighborhood}} and looks at the relationship between how much you pay and how much space (in square feet) you get.</p>
+			{{areaVersusPrice.1|safe}}
+			{{areaVersusPrice.0|safe}}
+	</div>
+</div>
+<div class="row animate-box chart-section">
+	<div class="col-lg-4 col-xs-12">
+		<h2 class="page-subtitle">Apartment Size By Bedrooms</h2>
+		<p>We all know New York doesn't have the most spacious of apartments. That said, how much space can we expect with each type of apartment? This chart shows you the median size (in square feet) of apartments in the {{neighborhood}} area based on the Craigslist listing. This, coupled with the chart above on price per bedroom, gives you a better idea of if that extra bedroom is really worth it for the extra space.</p>
+	</div>
+	<div class="col-lg-8 col-xs-12">
+		{{areaByBedrooms.1|safe}}
+		{{areaByBedrooms.0|safe}}
+	</div>
+</div>
+<div class="row animate-box chart-section">
+	<div class="col-lg-12 col-xs-12">
+		<h2 class="page-subtitle">How easy is it to get around in {{neighborhood}}?</h2>
+		<h3 class='data-excerpt'>There are a lot of ways to measure this, but one system we are big fans of is <strong>Walk Score</strong> and <strong>Transit Score</strong>. They are what they sound like - measures rating how much there is to walk to in the neighborhood (walk score) and how easy it is to get to some form of mass transit in the area (transit score). Both are on a 100 point scale, so for walk score a score of 100 means it is a walkers paradise with bars, restaurants and entertainment easily accessible by foot. Each apartment listing gets a score and we take the average across every New York City neighborhood. {{neighborhood}} has a <span class="highlight-data">walk score of {{easeOfGettingAround.2}}, which is {{easeOfGettingAround.3|ordinal}}</span> among all neighborhoods. When looking at transit score we see <span class="highlight-data">{{neighborhood}} has an average score of {{easeOfGettingAround.4}}, which is {{easeOfGettingAround.5|ordinal}}</span> across all neighborhoods.</h3>
+
+		<h4 class='note'>{{zipCode}} is shown as the lone, blue dot</h4>
+
+		{{easeOfGettingAround.1|safe}}
+		{{easeOfGettingAround.0|safe}}
+	</div>
+</div>
+{% endblock %}

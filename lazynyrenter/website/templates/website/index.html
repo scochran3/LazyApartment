@@ -1,0 +1,113 @@
+{% load static %}
+<!DOCTYPE HTML>
+<html>
+	<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Lazy Apartment</title>
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta name="description" content="TV Datatron 3000 - TV by the numbers" />
+	<meta name="author" content="Shawn Cochran" />
+
+	<meta property="og:title" content=""/>
+	<meta property="og:image" content=""/>
+	<meta property="og:url" content=""/>
+	<meta property="og:site_name" content=""/>
+	<meta property="og:description" content=""/>
+	<meta name="twitter:title" content="" />
+	<meta name="twitter:image" content="" />
+	<meta name="twitter:url" content="" />
+	<meta name="twitter:card" content="" />
+
+	<link href='https://fonts.googleapis.com/css?family=Work+Sans:400,300,600,400italic,700' rel='stylesheet' type='text/css'>
+	<link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700" rel="stylesheet">
+
+	
+	<!-- Animate.css -->
+	<link rel="stylesheet" href="{% static 'css/animate.css' %}">
+	<!-- Icomoon Icon Fonts-->
+	<link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
+	<!-- Bootstrap  -->
+	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+	<!-- Theme style  -->
+	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+
+	<!-- Modernizr JS -->
+	<script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
+	<!-- FOR IE9 below -->
+	<!--[if lt IE 9]>
+	<script src="{% static js/respond.min.js"></script>
+	<![endif]-->
+
+	</head>
+	<body>
+		
+	<div class="fh5co-loader"></div>
+	
+	<div id="page">
+	<nav class="fh5co-nav" role="navigation">
+		<div class="container">
+			<div class="row">
+				<div class="left-menu text-right menu-1">
+					<ul>
+						<li><a href="{% url 'byBorough' %}">By Borough</a></li>
+						<li><a href="{% url 'byNeighborhood' %}">By Neighborhood</a></li>
+					</ul>
+				</div>
+				<div class="logo">
+					<div id="fh5co-logo"><a href="{% url 'index' %}">Lazy NYC Apartment</a></div>
+				</div>
+				<div class="right-menu text-left menu-1">
+					<ul>
+						<li><a href="{% url 'byZipCode' %}">By Zip Code</a></li>
+						<li><a href="#">My Apartment's Value</a></li>
+						<!-- <li class="btn-cta"><a href="#"><span>Login</span></a></li> -->
+					</ul>
+				</div>
+			</div>
+			
+		</div>
+	</nav>
+
+	<header id="fh5co-header" class="fh5co-cover" role="banner" style="background-image:url({% static 'images/background-img.jpg' %});">
+		<div class="overlay"></div>
+		<div class="container">
+			<div class="row">
+				<div class="col-md-10 col-md-offset-1 text-center">
+					<div class="display-t">
+						<div class="display-tc animate-box" id="search-area" data-animate-effect="fadeIn">
+							<h1>Enter The Craigslist Ad URL</h1>
+							{% if request.session.error %}
+								<h3 class='show-not-found-error-message'>{{ request.session.error }}</h3>
+							{% endif %}
+							<div class="row">
+								<div class="col-md-6 col-md-offset-3">
+									<form method="POST" enctype="multipart/form-data" class="form-inline" id="fh5co-header-subscribe">{% csrf_token %}
+									<div class="form-group">
+										<input required name='show_title' type="text" class="form-control" id="show_title" placeholder="Game Of Thrones"  oninvalid="this.setCustomValidity('You must supply a show to proceed')" oninput="setCustomValidity('')">
+										<button type="submit" name="main" class="btn btn-default">View Data</button>
+									</div>
+									</form>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</header>
+
+	<!-- jQuery -->
+	<script src="{% static 'js/jquery.min.js' %}"></script>
+	<!-- jQuery Easing -->
+	<script src="{% static 'js/jquery.easing.1.3.js' %}"></script>
+	<!-- Bootstrap -->
+	<script src="{% static 'js/bootstrap.min.js' %}"></script>
+	<!-- Waypoints -->
+	<script src="{% static 'js/jquery.waypoints.min.js' %}"></script>
+	<!-- Main -->
+	<script src="{% static 'js/main.js' %}"></script>
+
+	</body>
+</html>
+

@@ -1,0 +1,25 @@
+{% extends 'website/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}New York City Apartment Prices by Zip Code{% endblock %}
+{% block content %}
+
+<div class="row animate-box">
+	<div class='col-lg-12'>
+		<h6 class="breadcrumb-trail"><a href="{% url 'index' %}">Home</a> > All Zipcodes</h6>
+	</div>
+	<div class="col-lg-12">
+		<h1 class="page-title">Apartment Pricing Data by Zip Codes</h1>
+		<h2 class="subheader">Please select a Zip Code</h2>
+		<p>Below you can see the zip codes we have apartment data on in New York City. We limit this to the top 100 zip codes, ordered by the number of apartment listings we have.</p>
+	</div>
+</div>
+<div class="row animate-box">
+	{% for zipCode in zipCodes %}
+	<div class='col-lg-4 col-xs-6'>
+		<h4 class="list-option hvr-grow"><a href="{% url 'zipCodeData' zipCode.postalCode %}">{{zipCode.postalCode}} ({{zipCode.count|intcomma}} listings)</a></h4>
+	</div>
+	{% endfor %}
+</div>
+
+{% endblock %}
