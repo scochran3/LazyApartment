@@ -28,7 +28,6 @@ class Apartment(models.Model):
 	postalCode = models.CharField(max_length=20, null=True, blank=True)
 	neighborhood = models.CharField(max_length=101, null=True, blank=True)
 	borough = models.CharField(max_length=50, default='None')
-	delete = models.IntegerField(default=10)
 
 	def save(self, *args, **kwargs):
 		self.neighborhood_slugged = slugify(self.neighborhood)
