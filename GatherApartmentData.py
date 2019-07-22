@@ -77,6 +77,8 @@ def enrichMapquestData(df):
 	df_geotags = df.copy()
 	df_geotags = df_geotags[df_geotags['geotag'].notnull()]
 
+	print (df.head())
+
 	for geotag in df_geotags['geotag'].unique():
 		endpoint = """http://www.mapquestapi.com/geocoding/v1/reverse?key={}&location={},{}&includeRoadMetadata=true&includeNearestIntersection=true&outFormat=json""".format(key, geotag[0], geotag[1])
 		r = requests.get(endpoint)
@@ -168,7 +170,7 @@ def enrichWalkScore(df):
 
 
 if __name__ == '__main__':
-	GatherApartmentData('New York City').getApartmentData()
-	# df = pd.read_csv('test.csv')
-	# print (df.columns)
-	# enrichMapquestData(df)
+	# GatherApartmentData('New York City').getApartmentData()
+	df = pd.read_csv('test.csv')
+	mapquest = enrichMapquestData(df)
+	walkscore = enrichWalkScore(mapquest)
