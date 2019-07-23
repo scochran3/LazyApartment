@@ -52,10 +52,6 @@ def boroughData(request, borough):
 	area_df = read_frame(areaQuerySet)
 	all_apartments_df = read_frame(allApartmentsQueryset)
 
-	area_df.to_csv('neighborhood.csv')
-
-	print (area_df)
-
 	# Figures
 	priciestApartments = createAreaVisualizations.listOfApartments(area_df, 'priciest')
 	cheapestApartments = createAreaVisualizations.listOfApartments(area_df, 'cheapest')

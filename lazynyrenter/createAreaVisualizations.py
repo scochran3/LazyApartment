@@ -277,7 +277,7 @@ def areaVersusPrice(df):
     # Create a copy amd remove useless data points]
     df_has_area = removeOutliers(df, remove_area_nulls=True, remove_area_outliers=True, remove_price_nulls=True, remove_price_outliers=True, remove_bedroom_nulls=True)
 
-    print (df_has_area)
+    df_has_area = df_has_area[['area', 'bedrooms', 'price']]
 
     # Rename to be user friendly
     df_has_area['bedrooms'] = df_has_area['bedrooms'].astype(
@@ -326,6 +326,7 @@ def areaVersusPrice(df):
     """
 
     p.add_tools(HoverTool(tooltips=tooltips))
+
 
     # Show the plot
     return returnFigure(p)
@@ -558,6 +559,8 @@ def removeOutliers(df,
     if remove_price_outliers:
         df_copy = df_copy[(df_copy['price'] < np.percentile(df_copy['price'],99)) & (df_copy['price'] > np.percentile(df_copy['price'], 1))]
 
+        df_copy = df_copy[df_copy['price'] != 0]
+
     # Remove rows without area
     if remove_area_nulls:
         df_copy = df_copy[df_copy['area'].isnull()==False]
@@ -574,7 +577,7 @@ def removeOutliers(df,
     return df_copy
 
 if __name__ == '__main__':
-    area = pd.read_csv('neighborhood.csv')
+    area = pd.read_csv('tester.csv')
     nyc = pd.read_csv('all_apartments.csv')
 
     areaVersusPrice(area)

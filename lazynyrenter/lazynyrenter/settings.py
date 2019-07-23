@@ -87,6 +87,17 @@ if 'RDS_HOSTNAME' in os.environ:
             'PORT': os.environ['RDS_PORT'],
         }
     }
+# else:
+#     DATABASES = {
+#         'default': {
+#             'ENGINE': 'django.db.backends.postgresql_psycopg2',
+#             'NAME': 'ebdb',
+#             'USER': 'shawncochran',
+#             'PASSWORD': '710Dart$',
+#             'HOST': 'aa10uxjrfmskobd.cf8tqavognjx.us-east-1.rds.amazonaws.com',
+#             'PORT': '5432',
+#         }
+#     }
 else:
     DATABASES = {
     'default': {
