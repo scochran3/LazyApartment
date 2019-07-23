@@ -53,6 +53,8 @@ colorB = '#5F5F5F'
 def plotOverTime(df_area, df_all, grouping, aggregation, resample_freq='d', compare=False):
 
     # Resample per day
+    df_area = removeOutliers(df_area, remove_price_outliers=True)
+    df_all = removeOutliers(df_all, remove_price_outliers=True)
     df_per_day_area = resamplePerDay(df_area, aggregation, resample_freq)
     df_per_day_city = resamplePerDay(df_all, aggregation, resample_freq)
 
@@ -81,7 +83,7 @@ def plotOverTime(df_area, df_all, grouping, aggregation, resample_freq='d', comp
 def priceHistogram(df, bins):
 
     # Remove outliers
-    df = removePriceAndSquareFootageOutliers(df, remove_price_nulls=True, remove_area_nulls=True)
+    df = removeOutliers(df, remove_price_nulls=True, remove_price_outliers=True)
 
     hist, edges = np.histogram(df['price'],
                                bins=bins,
@@ -127,11 +129,17 @@ def priceHistogram(df, bins):
 
 def averagePriceByBedrooms(df):
 
-    # Group by bedrooms
+    df.to_csv('delete.csv')
+
+    # Group by bedrooms and remove price outliers
     df_bedrooms = df.copy()
-    bedroomCounts = df_bedrooms['bedrooms'].dropna().astype(
+    df_bedrooms = removeOutliers(df_bedrooms, remove_price_outliers=True, remove_price_nulls=True, remove_bedroom_nulls=True)
+    bedroomCounts = df_bedrooms['bedrooms'].astype(
         int).value_counts() / len(df)
     bedroomCounts = bedroomCounts.to_dict()
+
+    for key, value in bedroomCounts.items():
+        bedroomCounts[key] = "{0:0.1%}".format(value)
 
     df_bedrooms = df_bedrooms[(df_bedrooms['bedrooms'].isnull() == False) & (
         df_bedrooms['price'] < np.percentile(df_bedrooms['price'], 99))]
@@ -173,8 +181,7 @@ def averagePriceByBedrooms(df):
 def squareFootageHistogram(df, bins):
 
     df_has_area = df.copy()
-    df_has_area = df_has_area[df_has_area['area'].isnull() == False]
-    df_has_area = df_has_area[df_has_area['area'] < np.percentile(df_has_area['area'], 99)]
+    df_has_area = removeOutliers(df_has_area, remove_area_nulls=True, remove_area_outliers=True)
 
     # Create numpy histogram
     hist, edges = np.histogram(df_has_area['area'],
@@ -267,8 +274,10 @@ def bedroomsPie(df):
 
 def areaVersusPrice(df):
 
-    # Create a cp[y amd remove useless data points]
-    df_has_area = removePriceAndSquareFootageOutliers(df, remove_area_nulls=True, remove_price_nulls=True, remove_bedroom_nulls=True)
+    # Create a copy amd remove useless data points]
+    df_has_area = removeOutliers(df, remove_area_nulls=True, remove_area_outliers=True, remove_price_nulls=True, remove_price_outliers=True, remove_bedroom_nulls=True)
+
+    print (df_has_area)
 
     # Rename to be user friendly
     df_has_area['bedrooms'] = df_has_area['bedrooms'].astype(
@@ -332,6 +341,7 @@ def listOfApartments(df, table_type):
     df_table = df_table[df_table['date'] > (today-timedelta(days=30))]
 
     if table_type == 'cheapest':
+        df_table = removeOutliers(df_table, remove_price_outliers=True, remove_price_nulls=True)
         df_table = df_table.sort_values(by='price').head(
             5)[['date', 'url', 'price', 'name']]
     elif table_type == 'priciest':
@@ -392,7 +402,7 @@ def averageSizeByBedrooms(df):
                        8.0: '8 Bedroom'}
 
     # Filter for apartments that have area
-    df_bedrooms = df.copy()
+    df_bedrooms = removeOutliers(df, remove_area_nulls=True, remove_area_outliers=True)
     df_bedrooms = df_bedrooms[df_bedrooms['area'].isnull() == False]
     df_bedrooms['bedrooms'] = df_bedrooms['bedrooms'].map(bedroomMappings)
     df_bedrooms = df_bedrooms.groupby(
@@ -440,14 +450,14 @@ def easeOfGettingAround(df_all_nyc, area_of_interest, grouping):
     # Find average walk and transit score across all cities
     df_walkability = df_all_nyc.copy()
     df_walkability = (df_walkability.groupby(grouping)
-                        [['walkScore', 'transitScore']]
-                        .mean().sort_values('walkScore').reset_index())
+                        [['walk_score', 'transit_score']]
+                        .mean().sort_values('walk_score').reset_index())
 
     df_walkability = df_walkability.rename(columns={'{}'.format(grouping): 'area'})
 
     # Create rank columns
-    df_walkability['walkScoreRank'] = df_walkability['walkScore'].rank(ascending=False)
-    df_walkability['transitScoreRank'] = df_walkability['transitScore'].rank(method='min', ascending=False)
+    df_walkability['walkScoreRank'] = df_walkability['walk_score'].rank(ascending=False)
+    df_walkability['transitScoreRank'] = df_walkability['transit_score'].rank(method='min', ascending=False)
 
     # Create columns for chart aesthetics
     df_walkability['color'] = df_walkability['area'].apply(
@@ -460,16 +470,16 @@ def easeOfGettingAround(df_all_nyc, area_of_interest, grouping):
     # Get the ranks and values for hover and paragraph
     areaWalkScoreRank = int(df_walkability[df_walkability['area']==area_of_interest]['walkScoreRank'].iloc[0])
     areaWalkScore = round(
-        df_walkability[df_walkability['area'] == area_of_interest]['walkScore'].iloc[0], 1)
+        df_walkability[df_walkability['area'] == area_of_interest]['walk_score'].iloc[0], 1)
     areaTransitScoreRank = int(df_walkability[df_walkability['area']==area_of_interest]['transitScoreRank'].iloc[0])
     areaTransitScore = round(
-        df_walkability[df_walkability['area'] == area_of_interest]['transitScore'].iloc[0], 1)
+        df_walkability[df_walkability['area'] == area_of_interest]['transit_score'].iloc[0], 1)
 
     # Create figure
     source = ColumnDataSource(df_walkability)
     p = figure(x_axis_label='Walk Score (Out of 100)',
                y_axis_label='Transit Score (Out Of 100)')
-    p.scatter(x='walkScore', y='transitScore', size='size', color='color',
+    p.scatter(x='walk_score', y='transit_score', size='size', color='color',
               line_color='#000000', alpha='alpha', source=source)
     p.y_range, p.x_range = Range1d(75, 105), Range1d(75, 105)
 
@@ -531,31 +541,40 @@ def returnFigure(p):
     return script, div
 
 
-def removePriceAndSquareFootageOutliers(df, remove_area_nulls=False, remove_price_nulls=False, remove_bedroom_nulls=False):
+def removeOutliers(df, 
+                    remove_area_outliers=False, 
+                    remove_area_nulls=False,
+                    remove_price_outliers=False,
+                    remove_price_nulls=False, 
+                    remove_bedroom_nulls=False):
 
     df_copy = df.copy()
+
+    # Remove price nulls
+    if remove_price_nulls:
+        df_copy = df_copy[df_copy['price'].isnull()==False]
+
+    # Remove price outliers
+    if remove_price_outliers:
+        df_copy = df_copy[(df_copy['price'] < np.percentile(df_copy['price'],99)) & (df_copy['price'] > np.percentile(df_copy['price'], 1))]
 
     # Remove rows without area
     if remove_area_nulls:
         df_copy = df_copy[df_copy['area'].isnull()==False]
 
-    if remove_price_nulls:
-        df_copy = df_copy[df_copy['price'].isnull()==False]
+    # Remove area outliers
+    if remove_area_outliers:
+        df_copy = df_copy[(df_copy['area'] < np.percentile(df_copy['area'],99)) & (df_copy['area'] > np.percentile(df_copy['area'], 1))]
 
-    if remove_price_nulls:
+    # Remove bedroom nulls
+    if remove_bedroom_nulls:
         df_copy = df_copy[df_copy['bedrooms'].isnull()==False]
 
-    df_copy = df_copy[(df_copy['price'] < np.percentile(df_copy['price'], 99)) & 
-                        (df_copy['price'] > np.percentile(df_copy['price'], 1)) &
-                        (df_copy['area'] < np.percentile(df_copy['area'], 99)) &
-                        (df_copy['area'] > np.percentile(df_copy['area'], 1))]
-
-    
 
     return df_copy
 
 if __name__ == '__main__':
-    area = pd.read_csv('area.csv')
+    area = pd.read_csv('neighborhood.csv')
     nyc = pd.read_csv('all_apartments.csv')
 
-    priceHistogram(area, 15)
+    areaVersusPrice(area)

@@ -1,8 +1,7 @@
 {% extends 'website/base.html' %}
 {% load static %}
 {% load humanize %}
-{% load percentage %}
-{% block title %}TV Datatron 3000 - All Shows{% endblock %}
+{% block title %}Price Of Apartments in NYC - {{neighborhood}}{% endblock %}
 {% block content %}
 
 <!-- Bokeh -->
@@ -69,11 +68,26 @@
 		<h2 class="page-subtitle">Average Price By Bedrooms</h2>
 		<p>The biggest factor in prices for apartments in New York is not surprisingly the number of bedrooms. Here you can see the median price for apartments in {{neighborhood}} based on the number of bedrooms. Also, for your info, here what percentage of listings in {{neighborhood}} are for each size of apartment:</p>
 		<ul>
-			<li><strong>Studios</strong>: {{priceByBedrooms.2.0|percentage}} of listings.</li>
-			<li><strong>1 Bedrooms</strong>: {{priceByBedrooms.2.1|percentage}} of listings.</li>
-			<li><strong>2 Bedrooms</strong>: {{priceByBedrooms.2.2|percentage}} of listings.</li>
-			<li><strong>3 Bedrooms</strong>: {{priceByBedrooms.2.3|percentage}} of listings.</li>
+			{% if priceByBedrooms.2.0 %}
+				<li><strong>Studios</strong>: {{priceByBedrooms.2.0}} of listings.</li>
+			{% endif %}
+			{% if priceByBedrooms.2.1 %}
+				<li><strong>One Bedrooms</strong>: {{priceByBedrooms.2.1}} of listings.</li>
+			{% endif %}
+			{% if priceByBedrooms.2.2 %}
+				<li><strong>Two Bedrooms</strong>: {{priceByBedrooms.2.2}} of listings.</li>
+			{% endif %}
+			{% if priceByBedrooms.2.3 %}
+				<li><strong>Three Bedrooms</strong>: {{priceByBedrooms.2.3}} of listings.</li>
+			{% endif %}
+			{% if priceByBedrooms.2.4 %}
+				<li><strong>Four Bedrooms</strong>: {{priceByBedrooms.2.4}} of listings.</li>
+			{% endif %}
+			{% if priceByBedrooms.2.5 %}
+				<li><strong>Five Bedrooms</strong>: {{priceByBedrooms.2.5}} of listings.</li>
+			{% endif %}
 		</ul>
+
 	</div>
 	<div class="col-lg-8 col-xs-12">
 		{{priceByBedrooms.1|safe}}
@@ -113,7 +127,7 @@
 		<h2 class="page-subtitle">How easy is it to get around in {{neighborhood}}?</h2>
 		<h3 class='data-excerpt'>There are a lot of ways to measure this, but one system we are big fans of is <strong>Walk Score</strong> and <strong>Transit Score</strong>. They are what they sound like - measures rating how much there is to walk to in the neighborhood (walk score) and how easy it is to get to some form of mass transit in the area (transit score). Both are on a 100 point scale, so for walk score a score of 100 means it is a walkers paradise with bars, restaurants and entertainment easily accessible by foot. Each apartment listing gets a score and we take the average across every New York City neighborhood. {{neighborhood}} has a <span class="highlight-data">walk score of {{easeOfGettingAround.2}}, which is {{easeOfGettingAround.3|ordinal}}</span> among all neighborhoods. When looking at transit score we see <span class="highlight-data">{{neighborhood}} has an average score of {{easeOfGettingAround.4}}, which is {{easeOfGettingAround.5|ordinal}}</span> across all neighborhoods.</h3>
 
-		<h4 class='note'>{{zipCode}} is shown as the lone, blue dot</h4>
+		<h4 class='note'>NOTE: {{neighborhood}} is shown as the lone, blue dot</h4>
 
 		{{easeOfGettingAround.1|safe}}
 		{{easeOfGettingAround.0|safe}}

@@ -23,7 +23,7 @@ def byNeighborhood(request):
 
 def byZipCode(request):
 
-	zipCodes = Apartment.objects.values('postalCode').annotate(count=Count('postalCode')).order_by('-count')[0:100]
+	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('-count')[0:100]
 
 	context = {'zipCodes': zipCodes}
 	
@@ -51,6 +51,10 @@ def boroughData(request, borough):
 	# Put data into a dataframe
 	area_df = read_frame(areaQuerySet)
 	all_apartments_df = read_frame(allApartmentsQueryset)
+
+	area_df.to_csv('neighborhood.csv')
+
+	print (area_df)
 
 	# Figures
 	priciestApartments = createAreaVisualizations.listOfApartments(area_df, 'priciest')
@@ -83,7 +87,7 @@ def boroughData(request, borough):
 def zipCodeData(request, zipCode):
 
 	# Filter for these neighborhoods
-	areaQuerySet = Apartment.objects.filter(postalCode=zipCode)
+	areaQuerySet = Apartment.objects.filter(postal_code=zipCode)
 	allApartmentsQueryset = Apartment.objects.all()
 
 	# Put data into a dataframe
@@ -94,14 +98,14 @@ def zipCodeData(request, zipCode):
 	# Figures
 	priciestApartments = createAreaVisualizations.listOfApartments(area_df, 'priciest')
 	cheapestApartments = createAreaVisualizations.listOfApartments(area_df, 'cheapest')
-	priceOverTime = createAreaVisualizations.plotOverTime(area_df, all_apartments_df, 'postalCode', 'mean', compare=True)
+	priceOverTime = createAreaVisualizations.plotOverTime(area_df, all_apartments_df, 'postal_code', 'mean', compare=True)
 	priceHistogram = createAreaVisualizations.priceHistogram(area_df, 15)
 	squareFootageHistogram = createAreaVisualizations.squareFootageHistogram(area_df, 15)
 	priceByBedrooms = createAreaVisualizations.averagePriceByBedrooms(area_df)
 	areaVersusPrice = createAreaVisualizations.areaVersusPrice(area_df)
-	areaPrices = createAreaVisualizations.areaPrices(all_apartments_df, zipCode, 'postalCode')
+	areaPrices = createAreaVisualizations.areaPrices(all_apartments_df, zipCode, 'postal_code')
 	areaByBedrooms = createAreaVisualizations.averageSizeByBedrooms(area_df)
-	easeOfGettingAround = createAreaVisualizations.easeOfGettingAround(all_apartments_df, zipCode, "postalCode")
+	easeOfGettingAround = createAreaVisualizations.easeOfGettingAround(all_apartments_df, zipCode, "postal_code")
 
 	context = {'zipCode': zipCode,
 				'priciestApartments': priciestApartments,
@@ -115,6 +119,7 @@ def zipCodeData(request, zipCode):
 				'areaByBedrooms': areaByBedrooms,
 				'easeOfGettingAround': easeOfGettingAround
 				}
+
 
 	return render(request, 'website/zipCodeData.html', context)
 
@@ -159,6 +164,9 @@ def neighborhoodData(request, neighborhood):
 				'areaByBedrooms': areaByBedrooms,
 				'easeOfGettingAround': easeOfGettingAround
 				}
+
+	
+
 
 	return render(request, 'website/neighborhoodData.html', context)
 

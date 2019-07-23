@@ -3,6 +3,8 @@ import django
 import pandas as pd
 import warnings
 from django.db import IntegrityError
+import numpy as np
+
 warnings.filterwarnings("ignore")
 
 # Connect to Django
@@ -14,12 +16,194 @@ django.setup()
 from website.models import Apartment
 
 # Read in data
-df = pd.read_csv('data/housing_cleaned_deduped.csv')
+df = pd.read_csv('data/housing.csv')
 
 # Replace nan with None for database
 df = df.where((pd.notnull(df)), None)
 
 df['datetime'] = pd.to_datetime(df['datetime'], infer_datetime_format=True)
+
+# Neighborhood Maps
+neighborhoodMaps = {'10453': 'Central Bronx',
+                            '10457': 'Central Bronx',
+                            '10460': 'Central Bronx',
+                            '10458': 'Bronx Park and Fordham',
+                            '10467': 'Bronx Park and Fordham',
+                            '10468': 'Bronx Park and Fordham',
+                            '10451': 'High Bridge and Morrisania',
+                            '10452': 'High Bridge and Morrisania',
+                            '10456': 'High Bridge and Morrisania',
+                            '10454': 'Hunts Point and Mott Haven',
+                            '10455': 'Hunts Point and Mott Haven',
+                            '10459': 'Hunts Point and Mott Haven',
+                            '10474': 'Hunts Point and Mott Haven',
+                            '10463': 'Kingsbridge and Riverdale',
+                            '10471': 'Kingsbridge and Riverdale',
+                            '10466': 'Northeast Bronx',
+                            '10469': 'Northeast Bronx',
+                            '10470': 'Northeast Bronx',
+                            '10475': 'Northeast Bronx',
+                            '10461': 'Southeast Bronx',
+                            '10462': 'Southeast Bronx',
+                            '10464': 'Southeast Bronx',
+                            '10465': 'Southeast Bronx',
+                            '10472': 'Southeast Bronx',
+                            '10473': 'Southeast Bronx',
+                            '11212': 'Central Brooklyn',
+                            '11213': 'Central Brooklyn',
+                            '11216': 'Central Brooklyn',
+                            '11233': 'Central Brooklyn',
+                            '11238': 'Central Brooklyn',
+                            '11209': 'Southwest Brooklyn',
+                            '11214': 'Southwest Brooklyn',
+                            '11228': 'Southwest Brooklyn',
+                            '11204': 'Borough Park',
+                            '11218': 'Borough Park',
+                            '11219': 'Borough Park',
+                            '11230': 'Borough Park',
+                            '11234': 'Canarsie and Flatlands',
+                            '11236': 'Canarsie and Flatlands',
+                            '11239': 'Canarsie and Flatlands',
+                            '11223': 'Southern Brooklyn',
+                            '11224': 'Southern Brooklyn',
+                            '11229': 'Southern Brooklyn',
+                            '11235': 'Southern Brooklyn',
+                            '11201': 'Northwest Brooklyn',
+                            '11205': 'Northwest Brooklyn',
+                            '11215': 'Northwest Brooklyn',
+                            '11217': 'Northwest Brooklyn',
+                            '11231': 'Northwest Brooklyn',
+                            '11203': 'Flatbush',
+                            '11210': 'Flatbush',
+                            '11225': 'Flatbush',
+                            '11226': 'Flatbush',
+                            '11207': 'East New York and New Lots',
+                            '11208': 'East New York and New Lots',
+                            '11211': 'Greenpoint',
+                            '11222': 'Greenpoint',
+                            '11220': 'Sunset Park',
+                            '11232': 'Sunset Park',
+                            '11206': 'Bushwick and Williamsburg',
+                            '11221': 'Bushwick and Williamsburg',
+                            '11237': 'Bushwick and Williamsburg',
+                            '10026': 'Central Harlem',
+                            '10027': 'Central Harlem',
+                            '10030': 'Central Harlem',
+                            '10037': 'Central Harlem',
+                            '10039': 'Central Harlem',
+                            '10001': 'Chelsea and Clinton',
+                            '10011': 'Chelsea and Clinton',
+                            '10018': 'Chelsea and Clinton',
+                            '10019': 'Chelsea and Clinton',
+                            '10020': 'Chelsea and Clinton',
+                            '10036': 'Chelsea and Clinton',
+                            '10029': 'East Harlem',
+                            '10035': 'East Harlem',
+                            '10010': 'Gramercy Park and Murray Hill',
+                            '10016': 'Gramercy Park and Murray Hill',
+                            '10017': 'Gramercy Park and Murray Hill',
+                            '10022': 'Gramercy Park and Murray Hill',
+                            '10012': 'Greenwich Village and Soho',
+                            '10013': 'Greenwich Village and Soho',
+                            '10014': 'Greenwich Village and Soho',
+                            '10004': 'Lower Manhattan',
+                            '10005': 'Lower Manhattan',
+                            '10006': 'Lower Manhattan',
+                            '10007': 'Lower Manhattan',
+                            '10038': 'Lower Manhattan',
+                            '10280': 'Lower Manhattan',
+                            '10002': 'Lower East Side',
+                            '10003': 'Lower East Side',
+                            '10009': 'Lower East Side',
+                            '10021': 'Upper East Side',
+                            '10028': 'Upper East Side',
+                            '10044': 'Upper East Side',
+                            '10065': 'Upper East Side',
+                            '10075': 'Upper East Side',
+                            '10128': 'Upper East Side',
+                            '10023': 'Upper West Side',
+                            '10024': 'Upper West Side',
+                            '10025': 'Upper West Side',
+                            '10031': 'Inwood and Washington Heights',
+                            '10032': 'Inwood and Washington Heights',
+                            '10033': 'Inwood and Washington Heights',
+                            '10034': 'Inwood and Washington Heights',
+                            '10040': 'Inwood and Washington Heights',
+                            '11361': 'Northeast Queens',
+                            '11362': 'Northeast Queens',
+                            '11363': 'Northeast Queens',
+                            '11364': 'Northeast Queens',
+                            '11354': 'North Queens',
+                            '11355': 'North Queens',
+                            '11356': 'North Queens',
+                            '11357': 'North Queens',
+                            '11358': 'North Queens',
+                            '11359': 'North Queens',
+                            '11360': 'North Queens',
+                            '11365': 'Central Queens',
+                            '11366': 'Central Queens',
+                            '11367': 'Central Queens',
+                            '11412': 'Jamaica',
+                            '11423': 'Jamaica',
+                            '11432': 'Jamaica',
+                            '11433': 'Jamaica',
+                            '11434': 'Jamaica',
+                            '11435': 'Jamaica',
+                            '11436': 'Jamaica',
+                            '11101': 'Northwest Queens',
+                            '11102': 'Northwest Queens',
+                            '11103': 'Northwest Queens',
+                            '11104': 'Northwest Queens',
+                            '11105': 'Northwest Queens',
+                            '11106': 'Northwest Queens',
+                            '11374': 'West Central Queens',
+                            '11375': 'West Central Queens',
+                            '11379': 'West Central Queens',
+                            '11385': 'West Central Queens',
+                            '11691': 'Rockaways',
+                            '11692': 'Rockaways',
+                            '11693': 'Rockaways',
+                            '11694': 'Rockaways',
+                            '11695': 'Rockaways',
+                            '11697': 'Rockaways',
+                            '11004': 'Southeast Queens',
+                            '11005': 'Southeast Queens',
+                            '11411': 'Southeast Queens',
+                            '11413': 'Southeast Queens',
+                            '11422': 'Southeast Queens',
+                            '11426': 'Southeast Queens',
+                            '11427': 'Southeast Queens',
+                            '11428': 'Southeast Queens',
+                            '11429': 'Southeast Queens',
+                            '11414': 'Southwest Queens',
+                            '11415': 'Southwest Queens',
+                            '11416': 'Southwest Queens',
+                            '11417': 'Southwest Queens',
+                            '11418': 'Southwest Queens',
+                            '11419': 'Southwest Queens',
+                            '11420': 'Southwest Queens',
+                            '11421': 'Southwest Queens',
+                            '11368': 'West Queens',
+                            '11369': 'West Queens',
+                            '11370': 'West Queens',
+                            '11372': 'West Queens',
+                            '11373': 'West Queens',
+                            '11377': 'West Queens',
+                            '11378': 'West Queens',
+                            '10302': 'Port Richmond',
+                            '10303': 'Port Richmond',
+                            '10310': 'Port Richmond',
+                            '10306': 'South Shore',
+                            '10307': 'South Shore',
+                            '10308': 'South Shore',
+                            '10309': 'South Shore',
+                            '10312': 'South Shore',
+                            '10301': 'Stapleton and St. George',
+                            '10304': 'Stapleton and St. George',
+                            '10305': 'Stapleton and St. George',
+                            '10314': 'Mid-Island'
+                        }
+
 # Borough Mapping
 boroughMaps = {'Central Bronx': 'Bronx', 
 				'Bronx Park and Fordham': 'Bronx', 
@@ -72,32 +256,69 @@ boroughMaps = {'Central Bronx': 'Bronx',
 
 for row_num, row in df.iterrows():
 
+	print (row_num)
 	try:
+		# Area
+		area = row['area']
+
+		if type(area) == str:
+			area = int(area.replace('ft2', ''))
+
+		if type(row['price']) == str:
+			price = row['price'].replace('$', '')
+		else:
+			price = row['price']
+
+		if row['area']:
+			includesArea = True
+		else:
+			includesArea = False
+
+		if "no fee" in row['name'].lower():
+			advertisesNoFee = True
+		else:
+			advertisesNoFee = False
+
+		if row['repost_of']:
+			isRepost = True
+		else:
+			isRepost = False
+
+		if type(row['postalCode']) == str:
+			postalCode = row['postalCode'][0:5]
+		else:
+			postalCode = None
+
+		try:
+			neighborhood = neighborhoodMaps[postalCode]
+			borough = boroughMaps[neighborhood]
+		except:
+			continue
+
+
 		Apartment.objects.create(
 			address = row['address'],
-			area = row['area'],
+			area = area,
 			bedrooms = row['bedrooms'],
-			bikeScore = row['bikeScore'],
-			transitScore = row['transitScore'],
-			walkScore = row['walkScore'],
+			bike_score = row['bikeScore'],
+			transit_score = row['transitScore'],
+			walk_score = row['walkScore'],
 			datetime = row['datetime'],
-			distanceToNearestIntersection = row['distanceToNearestIntersection'],
-			hasImage = row['has_image'],
-			hasMap = row['has_map'],
+			distance_to_nearest_intersection = row['distanceToNearestIntersection'],
+			has_image = row['has_image'],
+			has_map = row['has_map'],
 			name = row['name'], 
-			price = row['price'],
-			sideOfStreet = row['sideOfStreet'],
+			price = price,
+			side_of_street = row['sideOfStreet'],
 			url = row['url'],
-			longitude = row['lon'],
-			latitude = row['lat'],
-			includesArea = row['includes_area'],
-			advertisesNoFee = row['advertises_no_fee'],
-			isRepost = row['is_repost'],
-			postalCode = row['postalCode'][0:5],
-			neighborhood = row['neighborhood'],
-			borough=boroughMaps[row['neighborhood']])
+			longitude = row['geotag'][1:row['geotag'].index(',')],
+        	latitude = row['geotag'][row['geotag'].index(',')+2:-1],
+			includes_area = includesArea,
+			advertises_no_fee = advertisesNoFee,
+			is_repost = isRepost,
+			postal_code = postalCode,
+			neighborhood = neighborhood,
+			borough=borough)
 			
-	except TypeError:
-		continue
 	except IntegrityError:
 		continue

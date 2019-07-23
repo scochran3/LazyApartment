@@ -5,6 +5,13 @@ from psycopg2.extras import execute_values
 
 def lambda_handler(event, context):
     
+    # Get parameters for database
+    ssm = boto3.client('ssm', 'us-east-1')
+    user = ssm.get_parameter(Name='/apartments/db/user', WithDecryption=True)['Parameter']['Value']
+    password = ssm.get_parameter(Name='/apartments/db/password', WithDecryption=True)['Parameter']['Value']
+    host = ssm.get_parameter(Name='/apartments/db/host', WithDecryption=True)['Parameter']['Value']
+    database = ssm.get_parameter(Name='/apartments/db/database', WithDecryption=True)['Parameter']['Value']
+    
     # Connect
     connection = psycopg2.connect(user = "shawncochran",
                                     password = "710Dart$",
@@ -255,6 +262,11 @@ def lambda_handler(event, context):
                 'Stamford': 'None'
             }
 
+    # Check data in database
+    sqlCurrentDataInDB = "SELECT DISTINCT name, address FROM website_apartment;"
+    cursor.execute(sqlCurrentDataInDB)
+    currentDataInDB = cursor.fetchall()
+
     rowsToInsert = []
     for i, row in enumerate(json_data):
         address = row['address']
@@ -311,13 +323,19 @@ def lambda_handler(event, context):
         thisRow = (address, area, bedrooms, bikeScore, transitScore, walkScore, datetime, distanceToNearestIntersection, hasImage, hasMap, name, price, sideOfStreet, url, longitude, latitude, includesArea, advertisesNoFee, is_repost, postalCode, neighborhood, borough)
         
         rowAlreadyInDatabase = False
+
+        # Check data in this file
         if i > 0:
             for row in rowsToInsert:
                 if thisRow[10] == row[10] and thisRow[0] == row[0]:
                     rowAlreadyInDatabase = True
 
+        if (thisRow[10], thisRow[0]) in currentDataInDB:
+            rowAlreadyInDatabase = True
+
         if not rowAlreadyInDatabase:
             rowsToInsert.append(thisRow)
+
 
 
     insert_query = 'INSERT INTO website_apartment (address, area, bedrooms, bike_score, transit_score, walk_score, datetime, distance_to_nearest_intersection, has_image, has_map, name, price, side_of_street, url, longitude, latitude, includes_area, advertises_no_fee, is_repost, postal_code, Neighborhood, borough) values %s'
