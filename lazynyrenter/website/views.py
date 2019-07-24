@@ -4,6 +4,7 @@ from django.utils.text import slugify
 from django_pandas.io import read_frame
 from django.db.models import Count
 import createAreaVisualizations
+import createHomepageVisualizations
 
 
 
@@ -16,10 +17,21 @@ def index(request):
 	all_apartments_df = read_frame(allApartmentsQueryset)
 	all_apartments_df.to_csv('all_apartments_df.csv')
 
+	# Create charts
+	plotOverTime = createHomepageVisualizations.plotOverTime(all_apartments_df, 'median', 'd')
 
-	context = {'allApa'}
+	# Data for page
+	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
+	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
+	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('postal_code')
 
-	return render(request, 'website/index.html', {})
+
+	context = {'plotOverTime': plotOverTime,
+				'boroughs': boroughs,
+				'neighborhoods': neighborhoods,
+				'zipCodes': zipCodes}
+
+	return render(request, 'website/index.html', context)
 
 def byNeighborhood(request):
 	

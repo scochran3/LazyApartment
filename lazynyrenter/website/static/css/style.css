@@ -106,6 +106,8 @@ h1, h2, h3, h4, h5, h6, figure {
     display: inline-block;
     width: 40%;
     float: left;
+    font-weight: bold;
+    color: #FFFFFF;
   }
   .fh5co-nav .logo {
     width: 20%;
@@ -1438,8 +1440,9 @@ th, tr {
 }
 
 .subheader {
-  margin-top: 20px;
+  margin-top: 60px;
   margin-bottom: 20px;
+  font-weight: bold;
 }
 
 .note {
@@ -1450,4 +1453,39 @@ th, tr {
   margin-left: auto;
   margin-right: auto;
   text-align: center;
+}
+
+.data-explanation {
+  font-weight: bold;
+  font-size: .8em;
+  color: #555555;
+  font-style: italic;
+  text-transform: uppercase;
+}
+
+.three-col-header {
+  font-size: 1.2em;
+  font-weight: bold;
+  margin-top: 25px;
+}
+
+.three-col-div {
+  text-align: center;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.jumbotron-three-col-header {
+  font-size: 1.5em;
+  font-weight: bold;
+  margin-top: 25px;
+  color: white;
+}
+
+.outline {
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1px 1px 0 #000,
+    1px 1px 0 #000;
 }

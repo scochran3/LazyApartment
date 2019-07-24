@@ -2,42 +2,51 @@
 <!DOCTYPE HTML>
 <html>
 	<head>
-	<meta charset="utf-8">
-	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<title>Lazy Apartment</title>
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<meta name="description" content="TV Datatron 3000 - TV by the numbers" />
-	<meta name="author" content="Shawn Cochran" />
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Lazy Apartment</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		<meta name="description" content="TV Datatron 3000 - TV by the numbers" />
+		<meta name="author" content="Shawn Cochran" />
 
-	<meta property="og:title" content=""/>
-	<meta property="og:image" content=""/>
-	<meta property="og:url" content=""/>
-	<meta property="og:site_name" content=""/>
-	<meta property="og:description" content=""/>
-	<meta name="twitter:title" content="" />
-	<meta name="twitter:image" content="" />
-	<meta name="twitter:url" content="" />
-	<meta name="twitter:card" content="" />
+		<meta property="og:title" content=""/>
+		<meta property="og:image" content=""/>
+		<meta property="og:url" content=""/>
+		<meta property="og:site_name" content=""/>
+		<meta property="og:description" content=""/>
+		<meta name="twitter:title" content="" />
+		<meta name="twitter:image" content="" />
+		<meta name="twitter:url" content="" />
+		<meta name="twitter:card" content="" />
 
-	<link href='https://fonts.googleapis.com/css?family=Work+Sans:400,300,600,400italic,700' rel='stylesheet' type='text/css'>
-	<link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700" rel="stylesheet">
+		<link href='https://fonts.googleapis.com/css?family=Work+Sans:400,300,600,400italic,700' rel='stylesheet' type='text/css'>
+		<link href="https://fonts.googleapis.com/css?family=Playfair+Display:400,700" rel="stylesheet">
 
-	
-	<!-- Animate.css -->
-	<link rel="stylesheet" href="{% static 'css/animate.css' %}">
-	<!-- Icomoon Icon Fonts-->
-	<link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
-	<!-- Bootstrap  -->
-	<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
-	<!-- Theme style  -->
-	<link rel="stylesheet" href="{% static 'css/style.css' %}">
+		
+		<!-- Animate.css -->
+		<link rel="stylesheet" href="{% static 'css/animate.css' %}">
+		<!-- Icomoon Icon Fonts-->
+		<link rel="stylesheet" href="{% static 'css/icomoon.css' %}">
+		<!-- Bootstrap  -->
+		<link rel="stylesheet" href="{% static 'css/bootstrap.css' %}">
+		<!-- Theme style  -->
+		<link rel="stylesheet" href="{% static 'css/style.css' %}">
 
-	<!-- Modernizr JS -->
-	<script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
-	<!-- FOR IE9 below -->
-	<!--[if lt IE 9]>
-	<script src="{% static js/respond.min.js"></script>
-	<![endif]-->
+		<!-- Modernizr JS -->
+		<script src="{% static 'js/modernizr-2.6.2.min.js' %}"></script>
+
+		<!-- Font Awesome -->
+		<script src="https://kit.fontawesome.com/9097310902.js"></script>
+
+		<!-- Bokeh -->
+		<link href="http://cdn.pydata.org/bokeh/release/bokeh-1.2.0.min.css" rel="stylesheet" type="text/css">
+		<link href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.2.0.min.css" rel="stylesheet" type="text/css">
+		<link href="http://cdn.pydata.org/bokeh/release/bokeh-tables-1.2.0.min.css" rel="stylesheet" type="text/css">
+		<script src="http://cdn.pydata.org/bokeh/release/bokeh-1.2.0.min.js"></script>
+		<script src="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.2.0.min.js"></script>
+		<script src="http://cdn.pydata.org/bokeh/release/bokeh-tables-1.2.0.min.js"></script>
+		<script src="http://cdn.pydata.org/bokeh/release/bokeh-api-1.2.0.min.js"></script>
+		<script src="http://cdn.pydata.org/bokeh/release/bokeh-tables-1.2.0.min.js"></script>
 
 	</head>
 	<body>
@@ -55,7 +64,7 @@
 					</ul>
 				</div>
 				<div class="logo">
-					<div id="fh5co-logo"><a href="{% url 'index' %}">Lazy NYC Apartment</a></div>
+					<div id="fh5co-logo"><a href="{% url 'index' %}">TITLE</a></div>
 				</div>
 				<div class="right-menu text-left menu-1">
 					<ul>
@@ -76,18 +85,34 @@
 				<div class="col-md-10 col-md-offset-1 text-center">
 					<div class="display-t">
 						<div class="display-tc animate-box" id="search-area" data-animate-effect="fadeIn">
-							<h1>Enter The Craigslist Ad URL</h1>
-							{% if request.session.error %}
-								<h3 class='show-not-found-error-message'>{{ request.session.error }}</h3>
-							{% endif %}
+							<h1 class='outline'>Explore Our Apartments Data</h1>
 							<div class="row">
-								<div class="col-md-6 col-md-offset-3">
-									<form method="POST" enctype="multipart/form-data" class="form-inline" id="fh5co-header-subscribe">{% csrf_token %}
-									<div class="form-group">
-										<input required name='show_title' type="text" class="form-control" id="show_title" placeholder="Game Of Thrones"  oninvalid="this.setCustomValidity('You must supply a show to proceed')" oninput="setCustomValidity('')">
-										<button type="submit" name="main" class="btn btn-default">View Data</button>
-									</div>
-									</form>
+								<div class="col-lg-4 col-xs-12 three-col-div">
+									<h3 class="jumbotron-three-col-header outline">By Borough</h3>
+									<select name="boroughs">
+										<option value="">--- Select A Borough ---</option>
+										{% for borough in boroughs %}
+											<option value="{{borough.borough}}">{{borough.borough}}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="col-lg-4 col-xs-12 three-col-div">
+									<h3 class="jumbotron-three-col-header outline">By Neighborhood</h3>
+									<select name="neighborhoods">
+										<option value="">--- Select A Neighborhood ---</option>
+										{% for neighborhood in neighborhoods %}
+											<option value="{{neighborhood.neighborhood}}">{{neighborhood.neighborhood}}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="col-lg-4 col-xs-12 three-col-div">
+									<h3 class="jumbotron-three-col-header outline">By Zip Code</h3>
+									<select name="zipcodes">
+										<option value="">--- Select A Zip Code ---</option>
+										{% for zipCode in zipCodes %}
+											<option value="{{zipCode.postal_code}}">{{zipCode.postal_code}}</option>
+										{% endfor %}
+									</select>
 								</div>
 							</div>
 						</div>
@@ -96,6 +121,48 @@
 			</div>
 		</div>
 	</header>
+
+	<div id="fh5co-about">
+		<div class="container">
+			<div class="row animate-box">
+				<div class="col-lg-12">
+					<h1 class="page-title">Welcome To Title!</h1>
+					<h2 class="subheader">Who or what are we?</h2>
+						<p>We provide data on apartments in New York City that let you gauge price by borough, neighborhood or even zip code. The best part? It's all free. Every day (really every hour but let's not get too wonky) we gather data from <a href="https://newyork.craigslist.org/search/aap" target="_blank">Craigslist apartment listings</a> in New York and turn that into useful data for you. Ever wonder what the average price of an apartment in your hood is? Or how much will a 1 vs. a 2 bedroom cost? Start exploring our data and see for yourself.</p>
+				</div>
+			</div>
+			<div class="row animate-box">
+				<div class="col-lg-12">
+					<h2 class="subheader">Current Prices Across Boroughs</h2>
+					<p class='data-explanation'> *Median price per day across all apartments per borough</p>
+					<div class="col-lg-12">
+						{{plotOverTime.1|safe}}
+						{{plotOverTime.0|safe}}
+					</div>
+				</div>
+			</div>
+			<div class="row animate-box">
+				<div class="col-lg-12">
+					<h2 class="subheader">How it works</h2>
+					<div class="col-lg-4 col-xs-12 three-col-div">
+						<i class="fas fa-database fa-6x"></i>
+						<h3 class="three-col-header">Data Collection</h3>
+						<p>Every day we pull data from <a href="https://newyork.craigslist.org/search/aap" target="_blank">New York City Craigslist</a> apartment listings. This is where we gather prices and other data points like address, neighborhood, etc.</p>						
+					</div>
+					<div class="col-lg-4 col-xs-12 three-col-div">
+						<i class="fas fa-laptop-code fa-6x"></i>
+						<h3 class="three-col-header">Processing</h3>
+						<p>If you've ever been to Craigslist you know it's a bit...messy. Once we get the raw data we process it by removing outliers, adding additional data like walk scores based on the address, and more.
+					</div>
+					<div class="col-lg-4 col-xs-12 three-col-div">
+						<i class="fas fa-chart-area fa-6x"></i>
+						<h3 class="three-col-header">Visualization</h3>
+						<p>With our processing complete with have some nice and tidy data to share with you. We parse and visualize our data to provide useful insights like price per borough, average sizes of apartments, etc.
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 
 	<!-- jQuery -->
 	<script src="{% static 'js/jquery.min.js' %}"></script>
