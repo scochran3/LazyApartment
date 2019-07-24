@@ -88,35 +88,36 @@
 							<h1 class='outline'>Explore Our Apartments Data</h1>
 							<div class="row">
 								<div class="col-lg-4 col-xs-12 three-col-div">
-									<h3 class="jumbotron-three-col-header outline">By Borough</h3>
-									<select name="boroughs">
-										<option value="">--- Select A Borough ---</option>
+									<select class='homepageSelectBox' name="boroughs">
+										<option value="">--- By Borough ---</option>
 										{% for borough in boroughs %}
 											<option value="{{borough.borough}}">{{borough.borough}}</option>
 										{% endfor %}
 									</select>
 								</div>
 								<div class="col-lg-4 col-xs-12 three-col-div">
-									<h3 class="jumbotron-three-col-header outline">By Neighborhood</h3>
-									<select name="neighborhoods">
-										<option value="">--- Select A Neighborhood ---</option>
-										{% for neighborhood in neighborhoods %}
-											<option value="{{neighborhood.neighborhood}}">{{neighborhood.neighborhood}}</option>
-										{% endfor %}
-									</select>
-								</div>
-								<div class="col-lg-4 col-xs-12 three-col-div">
-									<h3 class="jumbotron-three-col-header outline">By Zip Code</h3>
-									<select name="zipcodes">
-										<option value="">--- Select A Zip Code ---</option>
+									<select class='homepageSelectBox' name="zipcodes">
+										<option value="">--- By Zip Code ---</option>
 										{% for zipCode in zipCodes %}
 											<option value="{{zipCode.postal_code}}">{{zipCode.postal_code}}</option>
 										{% endfor %}
 									</select>
 								</div>
+								<div class="col-lg-4 col-xs-12 three-col-div">
+									<select class='homepageSelectBox' name="neighborhoods">
+										<option value="">--- By Neighborhood ---</option>
+										{% for neighborhood in neighborhoods %}
+											<option value="{{neighborhood.neighborhood}}">{{neighborhood.neighborhood}}</option>
+										{% endfor %}
+									</select>
+								</div>
+							</div>
+							<div class="row submit-data" text-align="center">
+								<button type="submit" name="main" class="btn btn-default"><strong>Let's Go!</strong></button>
 							</div>
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</div>

@@ -10,6 +10,10 @@ import createHomepageVisualizations
 
 def index(request):
 
+	# Jumbotron processing
+	if request.method == 'POST':
+		print (request)
+
 	# Pull data on all apartments
 	allApartmentsQueryset = Apartment.objects.all()
 

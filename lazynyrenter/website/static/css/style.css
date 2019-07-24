@@ -1489,3 +1489,21 @@ th, tr {
     -1px 1px 0 #000,
     1px 1px 0 #000;
 }
+
+.homepageSelectBox{
+  border-radius:4px;
+  border:1px 
+  solid #AAAAAA;
+  line-height: 1.5;
+  font-size: 1.2em;
+  font-weight: bold;
+  font-color: #000000;
+  margin-top: 10px;
+  text-align: center;
+}
+
+.submit-data {
+  margin-top: 20px;
+  font-weight: bold;
+  text-transform: uppercase;
+}
