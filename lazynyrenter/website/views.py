@@ -8,7 +8,16 @@ import createAreaVisualizations
 
 
 def index(request):
-	context = {}
+
+	# Pull data on all apartments
+	allApartmentsQueryset = Apartment.objects.all()
+
+	# Create dataframe
+	all_apartments_df = read_frame(allApartmentsQueryset)
+	all_apartments_df.to_csv('all_apartments_df.csv')
+
+
+	context = {'allApa'}
 
 	return render(request, 'website/index.html', {})
 
