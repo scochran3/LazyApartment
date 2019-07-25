@@ -92,6 +92,38 @@ def plotOverTime(df, aggregation='median', resample_freq='d'):
     return returnFigure(p)
 
 
+def listOfApartments(df, table_type):
+
+    # Create a copy of the table and filter for the last 3 days
+    df_table = removeOutliers(df, remove_price_outliers=True, remove_price_nulls=True)
+    today = datetime.today().date()
+    df_table['date'] = pd.to_datetime(
+        df_table['datetime'], infer_datetime_format=True).dt.date
+    df_table = df_table[df_table['date'] > (today-timedelta(days=3))]
+
+    if table_type == 'cheapest':
+        df_table = df_table.sort_values(by='price').head(
+            5)[['date', 'url', 'price', 'name']]
+    elif table_type == 'priciest':
+        df_table = df_table.sort_values(by='price').tail(
+            5)[['date', 'url', 'price', 'name']][::-1]
+
+    # Create the list HTML
+    ul = "<ul>"
+
+    for i, row in df_table.iterrows():
+        ul += "<li><a class='hvr-push' target='_blank' href='{}'>{}, ${} - {}</a></li>".format(
+            row['url'], row['date'], row['price'], row['name'][0:30])
+
+    ul += "</ul>"
+
+    # Encode our list so we can use it in HTML
+    ul = ul.encode('ascii', 'ignore')
+    ul = ul.decode('ascii')
+
+    return ul
+
+
 def resamplePerDay(df, aggregation='mean', resample_freq='d'):
     df_per_day = df.copy()
     df_per_day.dropna(subset=['price'], inplace=True)

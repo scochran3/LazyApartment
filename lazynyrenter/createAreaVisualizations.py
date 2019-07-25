@@ -335,7 +335,7 @@ def areaVersusPrice(df):
 def listOfApartments(df, table_type):
 
     # Create a copy of the table and filter for the last 30 days
-    df_table = df.copy()
+    df_table = removeOutliers(df, remove_price_outliers=True, remove_price_nulls=True)
     today = datetime.today().date()
     df_table['date'] = pd.to_datetime(
         df_table['datetime'], infer_datetime_format=True).dt.date

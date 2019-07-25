@@ -57,7 +57,7 @@
 					</ul>
 				</div>
 				<div class="logo">
-					<div id="fh5co-logo"><a href="{% url 'index' %}">Lazy NYC Apartment</a></div>
+					<div id="fh5co-logo"><a href="{% url 'index' %}">TITLE</a></div>
 				</div>
 				<div class="right-menu text-left menu-1">
 					<ul>
@@ -78,22 +78,41 @@
 				<div class="col-md-10 col-md-offset-1 text-center">
 					<div class="display-t">
 						<div class="display-tc animate-box" id="search-area" data-animate-effect="fadeIn">
-							<h1>Enter The Craigslist Ad URL</h1>
-							{% if request.session.error %}
-								<h3 class='show-not-found-error-message'>{{ request.session.error }}</h3>
-							{% endif %}
+							<h1 class='outline'>Explore Our Apartments Data</h1>
+							<form method="POST" enctype="multipart/form-data">{% csrf_token %}
 							<div class="row">
-								<div class="col-md-6 col-md-offset-3">
-									<form method="POST" enctype="multipart/form-data" class="form-inline" id="fh5co-header-subscribe">{% csrf_token %}
-									<div class="form-group">
-										<input required name='show_title' type="text" class="form-control" id="show_title" placeholder="Game Of Thrones"  oninvalid="this.setCustomValidity('You must supply a show to proceed')" oninput="setCustomValidity('')">
-										<button type="submit" name="main" class="btn btn-default">View Data</button>
-									</div>
-									</form>
+								<div class="col-lg-4 col-xs-12 three-col-div">
+									<select class='homepageSelectBox' name="boroughs">
+										<option value="">--- By Borough ---</option>
+										{% for borough in boroughs %}
+											<option value="{{borough.borough}}">{{borough.borough}}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="col-lg-4 col-xs-12 three-col-div">
+									<select class='homepageSelectBox' name="zipCodes">
+										<option value="">--- By Zip Code ---</option>
+										{% for zipCode in zipCodes %}
+											<option value="{{zipCode.postal_code}}">{{zipCode.postal_code}}</option>
+										{% endfor %}
+									</select>
+								</div>
+								<div class="col-lg-4 col-xs-12 three-col-div">
+									<select class='homepageSelectBox' name="neighborhoods">
+										<option value="">--- By Neighborhood ---</option>
+										{% for neighborhood in neighborhoods %}
+											<option value="{{neighborhood.neighborhood}}">{{neighborhood.neighborhood}}</option>
+										{% endfor %}
+									</select>
 								</div>
 							</div>
+							<div class="row submit-data" text-align="center">
+								<button type="submit" name="main" class="btn btn-default"><strong>Let's Go!</strong></button>
+							</div>
+							</form>
 						</div>
 					</div>
+
 				</div>
 			</div>
 		</div>

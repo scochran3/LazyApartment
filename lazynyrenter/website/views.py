@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from .models import Apartment
 from django.utils.text import slugify
 from django_pandas.io import read_frame
@@ -7,12 +7,16 @@ import createAreaVisualizations
 import createHomepageVisualizations
 
 
-
 def index(request):
 
-	# Jumbotron processing
+	# Jumbotron form processing
 	if request.method == 'POST':
-		print (request)
+		if request.POST['boroughs']:
+			return redirect('boroughData', borough=slugify(request.POST['boroughs']))
+		if request.POST['neighborhoods']:
+			return redirect('neighborhoodData', neighborhood=slugify(request.POST['neighborhoods']))
+		if request.POST['zipCodes']:
+			return redirect('zipCodeData', zipCode=slugify(request.POST['zipCodes']))
 
 	# Pull data on all apartments
 	allApartmentsQueryset = Apartment.objects.all()
@@ -24,47 +28,109 @@ def index(request):
 	# Create charts
 	plotOverTime = createHomepageVisualizations.plotOverTime(all_apartments_df, 'median', 'd')
 
-	# Data for page
+	# Data for header
 	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
 	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
 	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('postal_code')
+
+	# Data for the page
+	cheapestListings = createHomepageVisualizations.listOfApartments(all_apartments_df, 'cheapest')
+	expensiveListings = createHomepageVisualizations.listOfApartments(all_apartments_df, 'priciest')
 
 
 	context = {'plotOverTime': plotOverTime,
 				'boroughs': boroughs,
 				'neighborhoods': neighborhoods,
-				'zipCodes': zipCodes}
+				'zipCodes': zipCodes,
+				'cheapestListings': cheapestListings,
+				'mostExpensiveListings': expensiveListings}
 
 	return render(request, 'website/index.html', context)
 
 def byNeighborhood(request):
-	
-	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
 
-	context = {'neighborhoods': neighborhoods}
+	# Jumbotron form processing
+	if request.method == 'POST':
+		if request.POST['boroughs']:
+			return redirect('boroughData', borough=slugify(request.POST['boroughs']))
+		if request.POST['neighborhoods']:
+			return redirect('neighborhoodData', neighborhood=slugify(request.POST['neighborhoods']))
+		if request.POST['zipCodes']:
+			return redirect('zipCodeData', zipCode=slugify(request.POST['zipCodes']))
+
+	# Data for header
+	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
+	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
+	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('postal_code')
+
+	context = {'boroughs': boroughs,
+				'neighborhoods': neighborhoods,
+				'zipCodes': zipCodes}
 
 	return render(request, 'website/allNeighborhoods.html', context)
 
 
 def byZipCode(request):
 
-	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('-count')[0:100]
+	# Jumbotron form processing
+	if request.method == 'POST':
+		if request.POST['boroughs']:
+			return redirect('boroughData', borough=slugify(request.POST['boroughs']))
+		if request.POST['neighborhoods']:
+			return redirect('neighborhoodData', neighborhood=slugify(request.POST['neighborhoods']))
+		if request.POST['zipCodes']:
+			return redirect('zipCodeData', zipCode=slugify(request.POST['zipCodes']))
 
-	context = {'zipCodes': zipCodes}
+	# Data for header
+	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
+	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
+	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('postal_code')
+
+	context = {'boroughs': boroughs,
+				'neighborhoods': neighborhoods,
+				'zipCodes': zipCodes}
 	
 	return render(request, 'website/allZipCodes.html', context)
 
 
 def byBorough(request):
 
-	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
+	# Jumbotron form processing
+	if request.method == 'POST':
+		if request.POST['boroughs']:
+			return redirect('boroughData', borough=slugify(request.POST['boroughs']))
+		if request.POST['neighborhoods']:
+			return redirect('neighborhoodData', neighborhood=slugify(request.POST['neighborhoods']))
+		if request.POST['zipCodes']:
+			return redirect('zipCodeData', zipCode=slugify(request.POST['zipCodes']))
 
-	context = {'boroughs': boroughs}
+	# Data for header
+	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
+	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
+	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('postal_code')
+
+	context = {'boroughs': boroughs,
+				'neighborhoods': neighborhoods,
+				'zipCodes': zipCodes}
 	
 	return render(request, 'website/allBoroughs.html', context)
 
 
 def boroughData(request, borough):
+
+	# Jumbotron form processing
+	if request.method == 'POST':
+		if request.POST['boroughs']:
+			return redirect('boroughData', borough=slugify(request.POST['boroughs']))
+		if request.POST['neighborhoods']:
+			return redirect('neighborhoodData', neighborhood=slugify(request.POST['neighborhoods']))
+		if request.POST['zipCodes']:
+			return redirect('zipCodeData', zipCode=slugify(request.POST['zipCodes']))
+
+	# Data for header
+	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
+	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
+	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('postal_code')
 
 	# Unslug neighborhood
 	borough = unslugifyWord(borough)
@@ -99,13 +165,30 @@ def boroughData(request, borough):
 				'areaVersusPrice': areaVersusPrice,
 				'areaPrices': areaPrices,
 				'areaByBedrooms': areaByBedrooms,
-				'easeOfGettingAround': easeOfGettingAround
+				'easeOfGettingAround': easeOfGettingAround,
+				'boroughs': boroughs,
+				'neighborhoods': neighborhoods,
+				'zipCodes': zipCodes
 				}
 
 	return render(request, 'website/boroughData.html', context)
 
 
 def zipCodeData(request, zipCode):
+
+	# Jumbotron form processing
+	if request.method == 'POST':
+		if request.POST['boroughs']:
+			return redirect('boroughData', borough=slugify(request.POST['boroughs']))
+		if request.POST['neighborhoods']:
+			return redirect('neighborhoodData', neighborhood=slugify(request.POST['neighborhoods']))
+		if request.POST['zipCodes']:
+			return redirect('zipCodeData', zipCode=slugify(request.POST['zipCodes']))
+
+	# Data for header
+	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
+	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
+	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('postal_code')
 
 	# Filter for these neighborhoods
 	areaQuerySet = Apartment.objects.filter(postal_code=zipCode)
@@ -138,7 +221,10 @@ def zipCodeData(request, zipCode):
 				'areaVersusPrice': areaVersusPrice,
 				'areaPrices': areaPrices,
 				'areaByBedrooms': areaByBedrooms,
-				'easeOfGettingAround': easeOfGettingAround
+				'easeOfGettingAround': easeOfGettingAround,
+				'boroughs': boroughs,
+				'neighborhoods': neighborhoods,
+				'zipCodes': zipCodes
 				}
 
 
@@ -147,6 +233,20 @@ def zipCodeData(request, zipCode):
 
 
 def neighborhoodData(request, neighborhood):
+
+	# Jumbotron form processing
+	if request.method == 'POST':
+		if request.POST['boroughs']:
+			return redirect('boroughData', borough=slugify(request.POST['boroughs']))
+		if request.POST['neighborhoods']:
+			return redirect('neighborhoodData', neighborhood=slugify(request.POST['neighborhoods']))
+		if request.POST['zipCodes']:
+			return redirect('zipCodeData', zipCode=slugify(request.POST['zipCodes']))
+
+	# Data for header
+	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
+	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
+	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('postal_code')
 
 	# Unslug neighborhood
 	neighborhood = unslugifyWord(neighborhood)
@@ -183,11 +283,11 @@ def neighborhoodData(request, neighborhood):
 				'areaVersusPrice': areaVersusPrice,
 				'areaPrices': areaPrices,
 				'areaByBedrooms': areaByBedrooms,
-				'easeOfGettingAround': easeOfGettingAround
+				'easeOfGettingAround': easeOfGettingAround,
+				'boroughs': boroughs,
+				'neighborhoods': neighborhoods,
+				'zipCodes': zipCodes
 				}
-
-	
-
 
 	return render(request, 'website/neighborhoodData.html', context)
 

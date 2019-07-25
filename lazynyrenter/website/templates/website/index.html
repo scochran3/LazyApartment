@@ -38,6 +38,9 @@
 		<!-- Font Awesome -->
 		<script src="https://kit.fontawesome.com/9097310902.js"></script>
 
+		<!-- Hover -->
+		<link rel="stylesheet" href="{% static 'css/hover.css' %}">
+
 		<!-- Bokeh -->
 		<link href="http://cdn.pydata.org/bokeh/release/bokeh-1.2.0.min.css" rel="stylesheet" type="text/css">
 		<link href="http://cdn.pydata.org/bokeh/release/bokeh-widgets-1.2.0.min.css" rel="stylesheet" type="text/css">
@@ -86,6 +89,7 @@
 					<div class="display-t">
 						<div class="display-tc animate-box" id="search-area" data-animate-effect="fadeIn">
 							<h1 class='outline'>Explore Our Apartments Data</h1>
+							<form method="POST" enctype="multipart/form-data">{% csrf_token %}
 							<div class="row">
 								<div class="col-lg-4 col-xs-12 three-col-div">
 									<select class='homepageSelectBox' name="boroughs">
@@ -96,7 +100,7 @@
 									</select>
 								</div>
 								<div class="col-lg-4 col-xs-12 three-col-div">
-									<select class='homepageSelectBox' name="zipcodes">
+									<select class='homepageSelectBox' name="zipCodes">
 										<option value="">--- By Zip Code ---</option>
 										{% for zipCode in zipCodes %}
 											<option value="{{zipCode.postal_code}}">{{zipCode.postal_code}}</option>
@@ -115,6 +119,7 @@
 							<div class="row submit-data" text-align="center">
 								<button type="submit" name="main" class="btn btn-default"><strong>Let's Go!</strong></button>
 							</div>
+							</form>
 						</div>
 					</div>
 
@@ -158,7 +163,20 @@
 					<div class="col-lg-4 col-xs-12 three-col-div">
 						<i class="fas fa-chart-area fa-6x"></i>
 						<h3 class="three-col-header">Visualization</h3>
-						<p>With our processing complete with have some nice and tidy data to share with you. We parse and visualize our data to provide useful insights like price per borough, average sizes of apartments, etc.
+						<p>With our processing complete with have some nice and tidy data to share with you. We parse and visualize our data to provide useful insights like price per borough, average sizes of apartments, etc.</p>
+					</div>
+				</div>
+			</div>
+			<div class="row animate-box">
+				<div class="col-lg-12">
+					<h2 class="subheader">Recently listed Apartments</h2>
+					<div class="col-lg-6 col-xs-12">
+						<h3>Most Expensive</h3>	
+						{{mostExpensiveListings|safe}}			
+					</div>
+					<div class="col-lg-6 col-xs-12">
+						<h3>Most Affordable</h3>
+						{{cheapestListings|safe}}
 					</div>
 				</div>
 			</div>
