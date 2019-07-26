@@ -1500,10 +1500,19 @@ th, tr {
   font-color: #000000;
   margin-top: 10px;
   text-align: center;
+  margin-top: 35px;
 }
 
 .submit-data {
   margin-top: 20px;
   font-weight: bold;
   text-transform: uppercase;
+}
+
+.third-level-header {
+  font-weight: bold;
+}
+
+ul {
+  font-size: 1.2em;
 }

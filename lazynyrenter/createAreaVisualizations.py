@@ -1,6 +1,6 @@
 import pandas as pd
 from bokeh.io import show
-from bokeh.models import ColumnDataSource, Range1d, LabelSet, HoverTool
+from bokeh.models import ColumnDataSource, Range1d, LabelSet, HoverTool, NumeralTickFormatter, SingleIntervalTicker
 from bokeh.io import curdoc
 from bokeh.themes import Theme
 from bokeh.plotting import figure
@@ -11,6 +11,7 @@ import numpy as np
 from jsmin import jsmin
 from math import pi
 from datetime import datetime, timedelta
+import math
 
 
 # Create our plot theme
@@ -62,7 +63,7 @@ def plotOverTime(df_area, df_all, grouping, aggregation, resample_freq='d', comp
     sourceArea = ColumnDataSource(df_per_day_area)
     sourceCity = ColumnDataSource(df_per_day_city)
     p = figure(x_axis_type='datetime', tools=[])
-    p.line(x='datetime', y='price', line_width=2, color=colorA,
+    p.line(x='datetime', y='price', line_width=4, color=colorA,
            source=sourceArea, legend=df_area[grouping].iloc[0])
 
     if compare:
@@ -75,7 +76,8 @@ def plotOverTime(df_area, df_all, grouping, aggregation, resample_freq='d', comp
 
     # Style chart
     p.y_range = Range1d(0, maxPrice*1.2)
-    # p.x_range = Range1d(df_per_day_city['datetime'].min(), df_per_day_city['datetime'].max())
+    p.yaxis.formatter=NumeralTickFormatter(format="0a")
+    p.yaxis[0].ticker.desired_num_ticks = 5
 
     return returnFigure(p)
 
@@ -101,6 +103,7 @@ def priceHistogram(df, bins):
     p.quad(bottom=0, top='count', left='left', right='right',
            fill_color=colorB, line_color='black', source=source)
     p.y_range = Range1d(0, hist_df['count'].max()*1.05)
+    p.yaxis.formatter=NumeralTickFormatter(format="0a")
 
     # Get variables for page
     mostCommonLowerBound = int(hist_df['left'].iloc[hist_df['count'].idxmax()])
@@ -134,6 +137,9 @@ def averagePriceByBedrooms(df):
     # Group by bedrooms and remove price outliers
     df_bedrooms = df.copy()
     df_bedrooms = removeOutliers(df_bedrooms, remove_price_outliers=True, remove_price_nulls=True, remove_bedroom_nulls=True)
+    df_bedrooms = df_bedrooms[df_bedrooms['bedrooms'] <= 5]
+
+    # Get counts of each type
     bedroomCounts = df_bedrooms['bedrooms'].astype(
         int).value_counts() / len(df)
     bedroomCounts = bedroomCounts.to_dict()
@@ -141,8 +147,7 @@ def averagePriceByBedrooms(df):
     for key, value in bedroomCounts.items():
         bedroomCounts[key] = "{0:0.1%}".format(value)
 
-    df_bedrooms = df_bedrooms[(df_bedrooms['bedrooms'].isnull() == False) & (
-        df_bedrooms['price'] < np.percentile(df_bedrooms['price'], 99))]
+    # Get string for the labels of the chart
     df_bedrooms['bedroom_string'] = df_bedrooms['bedrooms'].astype(
         int).astype(str) + ' Bedrooms'
     df_bedrooms['bedroom_string'] = df_bedrooms['bedroom_string'].str.replace(
@@ -150,7 +155,7 @@ def averagePriceByBedrooms(df):
     df_bedrooms = df_bedrooms.groupby('bedroom_string')[
         ['price']].mean().reset_index().sort_values(by='price')
     df_bedrooms['label'] = df_bedrooms['price'].apply(
-        lambda x: '${:,}'.format(int(x)))
+        lambda x: '{}k'.format(round((x/1000), 1)))
 
     # Create a column data source
     source = ColumnDataSource(df_bedrooms)
@@ -200,6 +205,7 @@ def squareFootageHistogram(df, bins):
     p.quad(bottom=0, top='count', left='left', right='right',
            fill_color=colorB, line_color='black', source=source)
     p.y_range = Range1d(0, hist_df['count'].max()*1.05)
+    p.xaxis.major_label_orientation = math.pi/2
 
     # Get variables for page
     mostCommonLowerBound = int(hist_df['left'].iloc[hist_df['count'].idxmax()])
@@ -304,9 +310,13 @@ def areaVersusPrice(df):
     p = figure(x_axis_label="Square Feet", y_axis_label="Price ($)", tools=[])
     p.scatter(x='area', y='price', color='color', size=15,
               line_color='#000000', alpha=.7, source=source, legend='bedrooms')
+
+    # Style the figure
     p.y_range = Range1d(0, df_has_area['price'].max()*1.05)
     p.legend.location = 'bottom_right'
     p.legend.click_policy = "hide"
+    p.yaxis.formatter=NumeralTickFormatter(format="0a")
+    p.xaxis.major_label_orientation = math.pi/2
 
     # Add a hovertool
     tooltips = """
@@ -356,8 +366,8 @@ def listOfApartments(df, table_type):
     ul = "<ul>"
 
     for i, row in df_table.iterrows():
-        ul += "<li class='hvr-grow'><a target='_blank' href='{}'>{}, ${} - {}</a></li>".format(
-            row['url'], row['date'], row['price'], row['name'][0:30])
+        ul += "<li><a class='hvr-push' target='_blank' href='{}'>{}, ${} - {}</a></li>".format(
+            row['url'], row['date'], row['price'], row['name'][0:25].replace('_', ' '))
 
     ul += "</ul>"
 
@@ -409,15 +419,20 @@ def averageSizeByBedrooms(df):
     df_bedrooms = df_bedrooms.groupby(
         'bedrooms')[['area']].median().reset_index().sort_values('area')
     df_bedrooms['area'] = df_bedrooms['area'].astype(int)
-    df_bedrooms['label'] = df_bedrooms['area'].apply(lambda x: str(x) + ' SF')
+    df_bedrooms['label'] = df_bedrooms['area'].apply(lambda x: str(x))
 
     # Create the figure
     source = ColumnDataSource(df_bedrooms)
     p = figure(y_range=df_bedrooms['bedrooms'],
                x_axis_label='Square Feet', tools=[])
     p.hbar(y='bedrooms', right='area', height=.5, source=source, color=colorA)
-    p.x_range = Range1d(0, df_bedrooms['area'].max()*1.15)
-    p.xaxis.visible = False
+
+    # Style the chart
+    p.x_range = Range1d(0, df_bedrooms['area'].max()*1.2)
+    p.xaxis.axis_label = "Square Feet"
+    p.xaxis.axis_line_color = None
+    p.xaxis.major_tick_line_color = None
+    p.xaxis.major_label_text_font_size = '0pt'
     p.yaxis.axis_line_color = None
     p.yaxis.major_tick_line_color = None
 
@@ -436,7 +451,7 @@ def averageSizeByBedrooms(df):
 
     # Add Labelset
     labels = LabelSet(x='area', y='bedrooms', x_offset=3, y_offset=-8,
-                      text='label', text_font_style='bold', source=source)
+                      text='label', text_font_style='bold', text_font_size='10pt', source=source)
     p.add_layout(labels)
 
     # Return the figure

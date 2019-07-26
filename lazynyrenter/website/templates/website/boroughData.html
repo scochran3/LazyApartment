@@ -30,7 +30,7 @@
 		<h2 class="page-subtitle">Location</h2>
 		<div style="width: 100%">
 		  <iframe width="100%" height="400" 
-		    src="https://maps.google.com/maps?output=embed&amp;height=400&amp;hl=en&amp;q={{borough}}+New+York&amp;ie=UTF8&amp;t=&amp;z=12&amp;iwloc=B"
+		    src="https://maps.google.com/maps?output=embed&amp;height=400&amp;hl=en&amp;q={{borough}}+New+York&amp;ie=UTF8&amp;t=&amp;z=11&amp;iwloc=B"
 		    frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe>
 		</div>
 	</div>
@@ -62,25 +62,25 @@
 <div class="row animate-box chart-section">
 	<div class="col-lg-4 col-xs-12">
 		<h2 class="page-subtitle">Average Price By Bedrooms</h2>
-		<p>The biggest factor in prices for apartments in New York is not surprisingly the number of bedrooms. Here you can see the median price for apartments in {{borough}} based on the number of bedrooms. Also, for your info, here what percentage of listings in {{borough}} are for each size of apartment:</p>
+		<p>The biggest factor in prices for apartments in New York is not surprisingly the number of bedrooms. Below you can see the median price for apartments in {{borough}} based on the number of bedrooms. Also you can see what percentage of listings are for each size of apartment.</p>
 		<ul>
 			{% if priceByBedrooms.2.0 %}
-				<li><strong>Studios</strong>: {{priceByBedrooms.2.0}} of listings.</li>
+				<li><strong>Studios</strong>: {{priceByBedrooms.2.0}}</li>
 			{% endif %}
 			{% if priceByBedrooms.2.1 %}
-				<li><strong>One Bedrooms</strong>: {{priceByBedrooms.2.1}} of listings.</li>
+				<li><strong>One Bedrooms</strong>: {{priceByBedrooms.2.1}}</li>
 			{% endif %}
 			{% if priceByBedrooms.2.2 %}
-				<li><strong>Two Bedrooms</strong>: {{priceByBedrooms.2.2}} of listings.</li>
+				<li><strong>Two Bedrooms</strong>: {{priceByBedrooms.2.2}}</li>
 			{% endif %}
 			{% if priceByBedrooms.2.3 %}
-				<li><strong>Three Bedrooms</strong>: {{priceByBedrooms.2.3}} of listings.</li>
+				<li><strong>Three Bedrooms</strong>: {{priceByBedrooms.2.3}}</li>
 			{% endif %}
 			{% if priceByBedrooms.2.4 %}
-				<li><strong>Four Bedrooms</strong>: {{priceByBedrooms.2.4}} of listings.</li>
+				<li><strong>Four Bedrooms</strong>: {{priceByBedrooms.2.4}}</li>
 			{% endif %}
 			{% if priceByBedrooms.2.5 %}
-				<li><strong>Five Bedrooms</strong>: {{priceByBedrooms.2.5}} of listings.</li>
+				<li><strong>Five Bedrooms</strong>: {{priceByBedrooms.2.5}}</li>
 			{% endif %}
 		</ul>
 	</div>

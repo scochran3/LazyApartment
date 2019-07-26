@@ -140,7 +140,7 @@
 			<div class="row animate-box">
 				<div class="col-lg-12">
 					<h2 class="subheader">Current Prices Across Boroughs</h2>
-					<p class='data-explanation'> *Median price per day across all apartments per borough</p>
+					<p class='data-explanation'> *Median price over the last week per borough</p>
 					<div class="col-lg-12">
 						{{plotOverTime.1|safe}}
 						{{plotOverTime.0|safe}}
@@ -151,17 +151,17 @@
 				<div class="col-lg-12">
 					<h2 class="subheader">How it works</h2>
 					<div class="col-lg-4 col-xs-12 three-col-div">
-						<i class="fas fa-database fa-6x"></i>
+						<i class="fas fa-database fa-8x"></i>
 						<h3 class="three-col-header">Data Collection</h3>
 						<p>Every day we pull data from <a href="https://newyork.craigslist.org/search/aap" target="_blank">New York City Craigslist</a> apartment listings. This is where we gather prices and other data points like address, neighborhood, etc.</p>						
 					</div>
 					<div class="col-lg-4 col-xs-12 three-col-div">
-						<i class="fas fa-laptop-code fa-6x"></i>
+						<i class="fas fa-laptop-code fa-8x"></i>
 						<h3 class="three-col-header">Processing</h3>
 						<p>If you've ever been to Craigslist you know it's a bit...messy. Once we get the raw data we process it by removing outliers, adding additional data like walk scores based on the address, and more.
 					</div>
 					<div class="col-lg-4 col-xs-12 three-col-div">
-						<i class="fas fa-chart-area fa-6x"></i>
+						<i class="fas fa-chart-area fa-8x"></i>
 						<h3 class="three-col-header">Visualization</h3>
 						<p>With our processing complete with have some nice and tidy data to share with you. We parse and visualize our data to provide useful insights like price per borough, average sizes of apartments, etc.</p>
 					</div>
@@ -171,11 +171,11 @@
 				<div class="col-lg-12">
 					<h2 class="subheader">Recently listed Apartments</h2>
 					<div class="col-lg-6 col-xs-12">
-						<h3>Most Expensive</h3>	
+						<h3 class="third-level-header">Most Expensive</h3>	
 						{{mostExpensiveListings|safe}}			
 					</div>
 					<div class="col-lg-6 col-xs-12">
-						<h3>Most Affordable</h3>
+						<h3 class="third-level-header">Most Affordable</h3>
 						{{cheapestListings|safe}}
 					</div>
 				</div>

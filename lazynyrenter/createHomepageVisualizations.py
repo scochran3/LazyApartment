@@ -1,6 +1,6 @@
 import pandas as pd
 from bokeh.io import show
-from bokeh.models import ColumnDataSource, Range1d, LabelSet, HoverTool
+from bokeh.models import ColumnDataSource, Range1d, LabelSet, HoverTool, NumeralTickFormatter
 from bokeh.io import curdoc
 from bokeh.themes import Theme
 from bokeh.plotting import figure
@@ -58,6 +58,7 @@ def plotOverTime(df, aggregation='median', resample_freq='d'):
     # Remove outliers and resample
     df = removeOutliers(df, remove_price_nulls=True, remove_price_outliers=True)
     df['date'] = pd.to_datetime(df['datetime'], infer_datetime_format=True).dt.date
+    df = df[df['date'] > (df['date'].max() - timedelta(days=7))]
 
     # Group
     df_grouped = df.groupby(['date', 'borough'])[['price']].median().reset_index()
@@ -84,6 +85,7 @@ def plotOverTime(df, aggregation='median', resample_freq='d'):
 
     # Style chart
     p.y_range = Range1d(0, df_grouped['price'].max()*1.1)
+    p.yaxis.formatter=NumeralTickFormatter(format="0a")
 
     # Move legend
     p.legend.location = 'bottom_left'
@@ -96,10 +98,12 @@ def listOfApartments(df, table_type):
 
     # Create a copy of the table and filter for the last 3 days
     df_table = removeOutliers(df, remove_price_outliers=True, remove_price_nulls=True)
-    today = datetime.today().date()
+    df_table['date'] = df_table['datetime'].dt.date
+    maxDate = df_table['date'].max()
+
     df_table['date'] = pd.to_datetime(
         df_table['datetime'], infer_datetime_format=True).dt.date
-    df_table = df_table[df_table['date'] > (today-timedelta(days=3))]
+    df_table = df_table[df_table['date'] > (maxDate-timedelta(days=3))]
 
     if table_type == 'cheapest':
         df_table = df_table.sort_values(by='price').head(
@@ -185,4 +189,4 @@ def removeOutliers(df,
 
 if __name__ == '__main__':
     nyc = pd.read_csv('all_apartments_df.csv')
-    plotOverTime(nyc)
+    plotOverTime(nyc, 'median', 'd')

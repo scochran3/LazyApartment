@@ -256,69 +256,80 @@ boroughMaps = {'Central Bronx': 'Bronx',
 
 for row_num, row in df.iterrows():
 
-	print (row_num)
-	try:
-		# Area
-		area = row['area']
+    try:
+        # Area
+        area = row['area']
 
-		if type(area) == str:
-			area = int(area.replace('ft2', ''))
+        if type(area) == str:
+            area = int(area.replace('ft2', ''))
 
-		if type(row['price']) == str:
-			price = row['price'].replace('$', '')
-		else:
-			price = row['price']
+        # Price
+        if type(row['price']) == str:
+            price = row['price'].replace('$', '')
+        else:
+            price = row['price']
 
-		if row['area']:
-			includesArea = True
-		else:
-			includesArea = False
+        # Includes Area
+        if row['area']:
+            includesArea = True
+        else:
+            includesArea = False
 
-		if "no fee" in row['name'].lower():
-			advertisesNoFee = True
-		else:
-			advertisesNoFee = False
+        # Mentions fee
+        if "no fee" in row['name'].lower():
+            advertisesNoFee = True
+        else:
+            advertisesNoFee = False
 
-		if row['repost_of']:
-			isRepost = True
-		else:
-			isRepost = False
+        # Whetehr or not it is a repost
+        if row['repost_of']:
+            isRepost = True
+        else:
+            isRepost = False
 
-		if type(row['postalCode']) == str:
-			postalCode = row['postalCode'][0:5]
-		else:
-			postalCode = None
+        # Clean up the zip code
+        if type(row['postalCode']) == str:
+            postalCode = row['postalCode'][0:5]
+        else:
+            postalCode = None
 
-		try:
-			neighborhood = neighborhoodMaps[postalCode]
-			borough = boroughMaps[neighborhood]
-		except:
-			continue
+        # Bedrooms
+        if row['bedrooms'] and 'studio' in row['name'].lower():
+            bedrooms = 0
+        else:
+            bedrooms = row['bedrooms']
+
+        # Get the neighborhood
+        try:
+            neighborhood = neighborhoodMaps[postalCode]
+            borough = boroughMaps[neighborhood]        
+        except:
+            continue
 
 
-		Apartment.objects.create(
-			address = row['address'],
-			area = area,
-			bedrooms = row['bedrooms'],
-			bike_score = row['bikeScore'],
-			transit_score = row['transitScore'],
-			walk_score = row['walkScore'],
-			datetime = row['datetime'],
-			distance_to_nearest_intersection = row['distanceToNearestIntersection'],
-			has_image = row['has_image'],
-			has_map = row['has_map'],
-			name = row['name'], 
-			price = price,
-			side_of_street = row['sideOfStreet'],
-			url = row['url'],
-			longitude = row['geotag'][1:row['geotag'].index(',')],
-        	latitude = row['geotag'][row['geotag'].index(',')+2:-1],
-			includes_area = includesArea,
-			advertises_no_fee = advertisesNoFee,
-			is_repost = isRepost,
-			postal_code = postalCode,
-			neighborhood = neighborhood,
-			borough=borough)
-			
-	except IntegrityError:
-		continue
+        Apartment.objects.create(
+            address = row['address'],
+            area = area,
+            bedrooms = bedrooms,
+            bike_score = row['bikeScore'],
+            transit_score = row['transitScore'],
+            walk_score = row['walkScore'],
+            datetime = row['datetime'],
+            distance_to_nearest_intersection = row['distanceToNearestIntersection'],
+            has_image = row['has_image'],
+            has_map = row['has_map'],
+            name = row['name'], 
+            price = price,
+            side_of_street = row['sideOfStreet'],
+            url = row['url'],
+            longitude = row['geotag'][1:row['geotag'].index(',')],
+            latitude = row['geotag'][row['geotag'].index(',')+2:-1],
+            includes_area = includesArea,
+            advertises_no_fee = advertisesNoFee,
+            is_repost = isRepost,
+            postal_code = postalCode,
+            neighborhood = neighborhood,
+            borough=borough)
+
+    except IntegrityError:
+        continue
