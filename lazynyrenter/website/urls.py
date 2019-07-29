@@ -9,5 +9,6 @@ urlpatterns = [
     path('new-york-city-apartment-prices-by-neighborhood/<neighborhood>/', views.neighborhoodData, name='neighborhoodData'),
     path('new-york-city-apartment-prices-by-zip-code/<zipCode>/', views.zipCodeData, name='zipCodeData'),
     path('new-york-city-apartment-prices-by-borough/<borough>/', views.boroughData, name='boroughData'),
+    path('how-much-will-i-pay', views.howMuchWillIPay, name='howMuchWillIPay')
 
 ]

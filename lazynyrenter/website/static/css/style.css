@@ -1498,7 +1498,6 @@ th, tr {
   font-size: 1.2em;
   font-weight: bold;
   font-color: #000000;
-  margin-top: 10px;
   text-align: center;
   margin-top: 35px;
 }
@@ -1515,4 +1514,15 @@ th, tr {
 
 ul {
   font-size: 1.2em;
+}
+
+.how-much-will-i-pay-select {
+  border-radius:4px;
+  border:1px 
+  solid #AAAAAA;
+  line-height: 1.5;
+  font-size: 1.2em;
+  font-weight: bold;
+  font-color: #000000;
+
 }

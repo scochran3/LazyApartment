@@ -47,6 +47,7 @@ def index(request):
 
 	return render(request, 'website/index.html', context)
 
+
 def byNeighborhood(request):
 
 	# Jumbotron form processing
@@ -231,7 +232,6 @@ def zipCodeData(request, zipCode):
 	return render(request, 'website/zipCodeData.html', context)
 
 
-
 def neighborhoodData(request, neighborhood):
 
 	# Jumbotron form processing
@@ -290,6 +290,42 @@ def neighborhoodData(request, neighborhood):
 				}
 
 	return render(request, 'website/neighborhoodData.html', context)
+
+
+def howMuchWillIPay(request):
+
+	# Jumbotron form processing
+	if request.method == 'POST':
+		if request.POST['boroughs']:
+			return redirect('boroughData', borough=slugify(request.POST['boroughs']))
+		if request.POST['neighborhoods']:
+			return redirect('neighborhoodData', neighborhood=slugify(request.POST['neighborhoods']))
+		if request.POST['zipCodes']:
+			return redirect('zipCodeData', zipCode=slugify(request.POST['zipCodes']))
+
+
+	# Data for header
+	boroughs = Apartment.objects.order_by('borough').values('borough').distinct().exclude(borough="None")
+	neighborhoods = Apartment.objects.order_by('neighborhood').values('neighborhood').distinct()
+	zipCodes = Apartment.objects.values('postal_code').annotate(count=Count('postal_code')).order_by('postal_code')
+
+	# Data for Page
+	numberOfApartments = Apartment.objects.all().count()
+	numberOfBedrooms = Apartment.objects.order_by('bedrooms').values('bedrooms').distinct()
+
+	print (numberOfBedrooms)
+	print ('!!!!!!!!!!!!!!!')
+
+
+	# Return the data
+	context = {'boroughs': boroughs,
+				'neighborhoods': neighborhoods,
+				'zipCodes': zipCodes,
+				'numberOfApartments': numberOfApartments
+				}
+
+	return render(request, 'website/howMuchWillIPay.html', context)
+
 
 
 def unslugifyWord(word):

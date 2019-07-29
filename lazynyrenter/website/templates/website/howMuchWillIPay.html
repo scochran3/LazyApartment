@@ -1,0 +1,37 @@
+{% extends 'website/base.html' %}
+{% load static %}
+{% load humanize %}
+{% block title %}New York City Apartment Prices by Zip Code{% endblock %}
+{% block content %}
+
+<div class="row animate-box">
+	<div class='col-lg-12'>
+		<h6 class="breadcrumb-trail"><a href="{% url 'index' %}">Home</a> > My Apartment's Value</h6>
+	</div>
+	<div class="col-lg-12">
+		<h1 class="page-title">How Much Can I Expect To Pay?</h1>
+		<p>To date we have collected data on {{numberOfApartments|intcomma}} apartments in New York City. What this means is we can use this data to let you know what you can expect to pay. Let us know some stuff about the type of place you are looking for and we can let you know what you can expect to pay.</p>
+	</div>	
+</div>
+<div class="row animate-box">
+	<div class="col-lg-3 col-xs-12">
+		<h2 class="subheader">Borough</h2>
+		<select class='how-much-will-i-pay-select' name="price-borough">
+			<option value="">--- What Borough ---</option>
+			{% for borough in boroughs %}
+				<option value="{{borough.borough}}">{{borough.borough}}</option>
+			{% endfor %}
+		</select>
+	</div>
+	<div class="col-lg-3 col-xs-12">
+		<h2 class="subheader">Bedrooms</h2>
+		<select class='how-much-will-i-pay-select' name="price-bedrooms">
+			<option value="">--- How Many Bedrooms ---</option>
+			{% for borough in boroughs %}
+				<option value="{{borough.borough}}">{{borough.borough}}</option>
+			{% endfor %}
+		</select>
+	</div>
+</div>
+
+{% endblock %}
